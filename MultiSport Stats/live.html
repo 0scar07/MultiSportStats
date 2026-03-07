@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MultiSport Stats — Live Matches</title>
+  <link rel="stylesheet" href="css/live.css">
+  <style>
+    .live-topbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(90deg, #0f1923, #1a2535);
+      color: white;
+      padding: 9px 18px;
+      border-radius: 10px;
+      margin-bottom: 22px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .pulse-ring {
+      position: relative;
+      width: 14px; height: 14px; flex-shrink: 0;
+    }
+    .pulse-ring::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: ringPulse 1.5s infinite;
+    }
+    .pulse-ring::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border-radius: 50%;
+      background: #22c55e;
+    }
+    @keyframes ringPulse {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(2.4); opacity: 0; }
+    }
+    .last-updated { margin-left: auto; color: #8a9ab0; font-weight: 400; font-size: 12px; }
+
+    @keyframes scoreFlash {
+      0% { background: #fef08a; color: #1a2535; transform: scale(1.3); border-radius: 6px; }
+      100% { background: transparent; transform: scale(1); }
+    }
+    .score-flash { animation: scoreFlash 0.8s ease-out; }
+
+    .goal-toast {
+      position: fixed;
+      top: 20px; right: 24px;
+      background: linear-gradient(135deg, #166534, #22c55e);
+      color: white;
+      padding: 14px 20px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 14px;
+      box-shadow: 0 8px 30px rgba(34,197,94,0.45);
+      z-index: 9999;
+      transform: translateX(200%);
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      min-width: 240px;
+    }
+    .goal-toast.show { transform: translateX(0); }
+    .toast-title { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; opacity: 0.8; margin-bottom: 4px; }
+    .toast-body { font-size: 15px; font-weight: 800; }
+    .toast-sub { font-size: 12px; font-weight: 500; opacity: 0.8; margin-top: 2px; }
+
+    @keyframes cardHighlight {
+      0% { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.3), 0 8px 24px rgba(0,0,0,0.1); }
+      100% { border-color: #e2e8f0; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    }
+    .card-glow { animation: cardHighlight 1.8s ease-out forwards; }
+
+    .card-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.15} }
+  </style>
+</head>
+<body class="app-body">
+
+  <div class="goal-toast" id="goalToast">
+    <div class="toast-title" id="toastTitle">⚽ GOLAZO</div>
+    <div class="toast-body" id="toastBody"></div>
+    <div class="toast-sub" id="toastSub"></div>
+  </div>
+
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="dashboard.html">
+      <div class="sidebar-logo-icon">🏆</div>
+      <div class="sidebar-logo-text">Multi<span>Sport</span><br>Stats</div>
+    </a>
+    <nav class="sidebar-nav">
+      <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
+      <a class="nav-item active" href="live.html"><span class="nav-icon">📊</span> Live Matches</a>
+      <a class="nav-item" href="standings.html"><span class="nav-icon">🏅</span> Standings</a>
+      <a class="nav-item" href="about.html"><span class="nav-icon">ℹ️</span> About Us</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a class="logout-btn" href="login.html"><span>↩</span> Logout</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-title">
+      Live Matches
+      <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+    </div>
+
+    <div class="live-topbar">
+      <div class="pulse-ring"></div>
+      <span>6 partidos en vivo ahora mismo</span>
+      <span class="last-updated" id="lastUpdated">Actualizado hace 0s</span>
+    </div>
+
+    <div class="filter-tabs">
+      <div class="tab active" onclick="filterCards('all',this)">Todos</div>
+      <div class="tab" onclick="filterCards('futbol',this)">⚽ Fútbol</div>
+      <div class="tab" onclick="filterCards('baloncesto',this)">🏀 Baloncesto</div>
+      <div class="tab" onclick="filterCards('tenis',this)">🎾 Tenis</div>
+      <div class="tab" onclick="filterCards('hockey',this)">🏒 Hockey</div>
+    </div>
+
+    <div class="cards-grid" id="cardsGrid"></div>
+  </main>
+
+  <script>
+    const matches = [
+      {id:'m1', sport:'futbol', icon:'⚽', league:'La Liga', t1:'Barcelona', t2:'Real Madrid', s1:2, s2:1, minute:78, type:'soccer'},
+      {id:'m2', sport:'baloncesto', icon:'🏀', league:'NBA', t1:'Lakers', t2:'Bulls', s1:98, s2:95, time:225, quarter:4, type:'basketball'},
+      {id:'m3', sport:'tenis', icon:'🎾', league:'Roland Garros', t1:'Djokovic', t2:'Nadal', s1:2, s2:1, set:3, type:'tennis'},
+      {id:'m4', sport:'futbol', icon:'⚽', league:'Premier League', t1:'Man City', t2:'Arsenal', s1:3, s2:2, minute:89, type:'soccer'},
+      {id:'m5', sport:'hockey', icon:'🏒', league:'NHL', t1:'Maple Leafs', t2:'Bruins', s1:4, s2:3, time:468, period:3, type:'hockey'},
+      {id:'m6', sport:'baloncesto', icon:'🏀', league:'NBA', t1:'Warriors', t2:'Celtics', s1:112, s2:108, time:419, quarter:3, type:'basketball'},
+    ];
+
+    let secondsAgo = 0;
+    let activeFilter = 'all';
+
+    function statusText(m) {
+      if (m.type === 'soccer') return m.minute + "'";
+      if (m.type === 'basketball') {
+        const mins = Math.floor(m.time/60), secs = m.time%60;
+        return 'Q'+m.quarter+' '+mins+':'+String(secs).padStart(2,'0');
+      }
+      if (m.type === 'tennis') return 'Set '+m.set;
+      if (m.type === 'hockey') {
+        const mins = Math.floor(m.time/60), secs = m.time%60;
+        return 'P'+m.period+' '+mins+':'+String(secs).padStart(2,'0');
+      }
+    }
+
+    function renderCards() {
+      const grid = document.getElementById('cardsGrid');
+      grid.innerHTML = '';
+      matches.forEach(m => {
+        if (activeFilter !== 'all' && m.sport !== activeFilter) return;
+        const d = document.createElement('div');
+        d.className = 'match-card';
+        d.id = m.id;
+        d.innerHTML = `
+          <div class="card-sport"><span class="card-sport-icon">${m.icon}</span> ${m.league}</div>
+          <div class="card-teams">
+            <div class="team-row"><span class="team-name">${m.t1}</span><span class="team-score" id="${m.id}-s1">${m.s1}</span></div>
+            <div class="team-row"><span class="team-name">${m.t2}</span><span class="team-score" id="${m.id}-s2">${m.s2}</span></div>
+          </div>
+          <div class="card-status"><span class="status-dot"></span><span id="${m.id}-time">${statusText(m)}</span></div>`;
+        grid.appendChild(d);
+      });
+    }
+
+    function filterCards(sport, el) {
+      activeFilter = sport;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      renderCards();
+    }
+
+    function flashScore(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('score-flash');
+      void el.offsetWidth;
+      el.classList.add('score-flash');
+    }
+
+    function glowCard(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('card-glow');
+      void el.offsetWidth;
+      el.classList.add('card-glow');
+    }
+
+    function showToast(title, body, sub) {
+      const t = document.getElementById('goalToast');
+      document.getElementById('toastTitle').textContent = title;
+      document.getElementById('toastBody').textContent = body;
+      document.getElementById('toastSub').textContent = sub;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3800);
+    }
+
+    setInterval(() => {
+      matches.forEach(m => {
+        if (m.type === 'soccer' && m.minute < 90) m.minute++;
+        else if ((m.type === 'basketball' || m.type === 'hockey') && m.time > 0) m.time--;
+        const el = document.getElementById(m.id+'-time');
+        if (el) el.textContent = statusText(m);
+      });
+      secondsAgo++;
+      document.getElementById('lastUpdated').textContent = 'Actualizado hace '+secondsAgo+'s';
+    }, 1000);
+
+    function randomEvent() {
+      const pool = matches.filter(m => m.type !== 'tennis');
+      const m = pool[Math.floor(Math.random()*pool.length)];
+      const isT1 = Math.random() > 0.5;
+      const teamName = isT1 ? m.t1 : m.t2;
+      if (isT1) {
+        m.s1++;
+        const el = document.getElementById(m.id+'-s1');
+        if (el) { el.textContent = m.s1; flashScore(m.id+'-s1'); }
+      } else {
+        m.s2++;
+        const el = document.getElementById(m.id+'-s2');
+        if (el) { el.textContent = m.s2; flashScore(m.id+'-s2'); }
+      }
+      glowCard(m.id);
+      secondsAgo = 0;
+      document.getElementById('lastUpdated').textContent = 'Actualizado ahora ✓';
+
+      const icons = {futbol:'⚽ GOLAZO', baloncesto:'🏀 CANASTA', hockey:'🏒 GOLAZO'};
+      showToast(icons[m.sport]||'🎯 PUNTO', teamName+' anota!', m.league+' · '+statusText(m));
+      setTimeout(randomEvent, 7000 + Math.random()*11000);
+    }
+
+    renderCards();
+    setTimeout(randomEvent, 5000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MultiSport Stats — Highlights</title>
+  <link rel="stylesheet" href="css/dasboard.css"/>
+  <style>
+    /* ── HERO ── */
+    .highlights-hero {
+      background: linear-gradient(135deg, #0f1923 0%, #1a2535 50%, #1a0f23 100%);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    .highlights-hero::before {
+      content: '';
+      position: absolute; top: -60px; right: -40px;
+      width: 220px; height: 220px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(168,85,247,0.15) 0%, transparent 70%);
+    }
+    .hero-left h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 30px; font-weight: 800; color: white;
+      margin-bottom: 4px;
+    }
+    .hero-left p { font-size: 13px; color: #8a9ab0; }
+    .hero-badge {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(168,85,247,0.15);
+      border: 1px solid rgba(168,85,247,0.3);
+      color: #c084fc; padding: 8px 16px;
+      border-radius: 20px; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── FILTER TABS ── */
+    .filter-bar {
+      display: flex; gap: 8px; margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 8px 18px; border-radius: 20px;
+      border: 1.5px solid #e2e8f0; background: white;
+      font-size: 13px; font-weight: 700; color: #8a9ab0;
+      cursor: pointer; transition: all .2s;
+    }
+    .filter-btn:hover { color: #1a2535; border-color: #1a2535; }
+    .filter-btn.active { background: #0f1923; border-color: #0f1923; color: white; }
+
+    /* ── SEARCH BAR ── */
+    .search-wrap {
+      position: relative; margin-bottom: 28px;
+    }
+    .search-input {
+      width: 100%; padding: 13px 18px 13px 46px;
+      border: 1.5px solid #e2e8f0; border-radius: 12px;
+      font-size: 14px; font-family: 'Barlow', sans-serif;
+      color: #1a2535; outline: none; transition: border-color .2s;
+      background: white;
+    }
+    .search-input:focus { border-color: #22c55e; }
+    .search-icon {
+      position: absolute; left: 16px; top: 50%;
+      transform: translateY(-50%); font-size: 16px; pointer-events: none;
+    }
+
+    /* ── VIDEO GRID ── */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    @media (max-width: 1000px) { .video-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 640px) { .video-grid { grid-template-columns: 1fr; } }
+
+    /* ── VIDEO CARD ── */
+    .video-card {
+      background: white;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      transition: transform .2s, box-shadow .2s;
+      cursor: pointer;
+    }
+    .video-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+    }
+    .video-thumb {
+      position: relative;
+      width: 100%; padding-top: 56.25%; /* 16:9 */
+      background: #0f1923; overflow: hidden;
+    }
+    .video-thumb img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform .3s;
+    }
+    .video-card:hover .video-thumb img { transform: scale(1.05); }
+    .play-btn {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 48px; height: 48px; border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      transition: transform .2s, background .2s;
+    }
+    .video-card:hover .play-btn {
+      transform: translate(-50%, -50%) scale(1.1);
+      background: white;
+    }
+    .video-duration {
+      position: absolute; bottom: 8px; right: 8px;
+      background: rgba(0,0,0,0.75); color: white;
+      font-size: 11px; font-weight: 700;
+      padding: 2px 7px; border-radius: 6px;
+    }
+    .video-league-badge {
+      position: absolute; top: 8px; left: 8px;
+      background: rgba(0,0,0,0.7); color: white;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+      padding: 3px 8px; border-radius: 6px;
+    }
+    .video-info { padding: 14px 16px; }
+    .video-title {
+      font-weight: 700; font-size: 14px; color: #0f1923;
+      margin-bottom: 6px; line-height: 1.4;
+      display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .video-meta {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; color: #8a9ab0;
+    }
+    .video-meta .sport-tag {
+      display: flex; align-items: center; gap: 4px;
+      font-weight: 600;
+    }
+    .video-views { display: flex; align-items: center; gap: 4px; }
+
+    /* ── VIDEO MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-box {
+      background: #0f1923;
+      border-radius: 16px;
+      width: 100%; max-width: 860px;
+      overflow: hidden;
+      transform: scale(0.9);
+      transition: transform .3s;
+    }
+    .modal-overlay.open .modal-box { transform: scale(1); }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .modal-title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 800; color: white; }
+    .modal-close {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); border: none;
+      color: white; font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.2); }
+    .modal-video {
+      position: relative; padding-top: 56.25%;
+      background: black;
+    }
+    .modal-video iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; border: none;
+    }
+    .modal-footer {
+      padding: 14px 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .modal-league { font-size: 12px; color: #8a9ab0; font-weight: 600; }
+    .modal-date { font-size: 12px; color: #8a9ab0; margin-left: auto; }
+
+    /* ── LOADING ── */
+    .loading-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .skeleton {
+      background: white; border-radius: 14px;
+      overflow: hidden; border: 1px solid #e2e8f0;
+    }
+    .skeleton-thumb {
+      width: 100%; padding-top: 56.25%;
+      background: linear-gradient(90deg, #f0f2f5 25%, #e8eaed 50%, #f0f2f5 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    .skeleton-info { padding: 14px 16px; }
+    .skeleton-line {
+      height: 12px; border-radius: 6px;
+      background: linear-gradient(90deg, #f0f2f5 25%, #e8eaed 50%, #f0f2f5 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      margin-bottom: 8px;
+    }
+    .skeleton-line.short { width: 60%; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    /* ── FEATURED VIDEO ── */
+    .featured-section { margin-bottom: 28px; }
+    .featured-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 18px; font-weight: 800; color: #0f1923;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .featured-card {
+      border-radius: 16px; overflow: hidden;
+      position: relative; cursor: pointer;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    }
+    .featured-thumb {
+      width: 100%; height: 340px;
+      object-fit: cover;
+      transition: transform .4s;
+      display: block;
+    }
+    .featured-card:hover .featured-thumb { transform: scale(1.03); }
+    .featured-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
+      display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 28px;
+    }
+    .featured-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #dc2626; color: white;
+      font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+      padding: 4px 10px; border-radius: 6px;
+      margin-bottom: 10px; width: fit-content;
+    }
+    .featured-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 26px; font-weight: 800; color: white;
+      line-height: 1.2; margin-bottom: 8px;
+    }
+    .featured-meta { font-size: 13px; color: rgba(255,255,255,0.7); }
+    .featured-play {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 68px; height: 68px; border-radius: 50%;
+      background: rgba(255,255,255,0.95);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      transition: transform .2s, background .2s;
+    }
+    .featured-card:hover .featured-play { transform: translate(-50%, -50%) scale(1.1); }
+
+    .section-header {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 18px; font-weight: 800; color: #0f1923;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      margin-bottom: 16px; margin-top: 32px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-header span { color: #8a9ab0; font-size: 14px; font-weight: 600; text-transform: none; letter-spacing: 0; }
+
+    .no-results {
+      text-align: center; padding: 60px 20px;
+      color: #8a9ab0; font-size: 14px;
+    }
+    .no-results .nr-icon { font-size: 48px; margin-bottom: 12px; }
+  </style>
+</head>
+<body class="app-body">
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="videoModal" onclick="closeModal(event)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Highlights</div>
+        <button class="modal-close" onclick="closeVideoModal()">✕</button>
+      </div>
+      <div class="modal-video">
+        <iframe id="modalIframe" src="" allowfullscreen allow="autoplay; fullscreen"></iframe>
+      </div>
+      <div class="modal-footer">
+        <span class="modal-league" id="modalLeague"></span>
+        <span class="modal-date" id="modalDate"></span>
+      </div>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="dashboard.html">
+      <div class="sidebar-logo-icon">🏆</div>
+      <div class="sidebar-logo-text">Multi<span>Sport</span><br>Stats</div>
+    </a>
+    <nav class="sidebar-nav">
+      <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
+      <a class="nav-item" href="live.html"><span class="nav-icon">📊</span> Live Matches</a>
+      <a class="nav-item active" href="highlights.html"><span class="nav-icon">🎬</span> Highlights</a>
+      <a class="nav-item" href="news.html"><span class="nav-icon">📰</span> Noticias</a>
+      <a class="nav-item" href="search.html"><span class="nav-icon">🔍</span> Buscar</a>
+      <a class="nav-item" href="standings.html"><span class="nav-icon">🏅</span> Standings</a>
+      <a class="nav-item" href="profile.html"><span class="nav-icon">👤</span> Mi Perfil</a>
+      <a class="nav-item" href="about.html"><span class="nav-icon">ℹ️</span> About Us</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a class="logout-btn" href="login.html"><span>↩</span> Logout</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="highlights-hero">
+      <div class="hero-left">
+        <h2>🎬 Highlights</h2>
+        <p>Los mejores momentos del deporte mundial en un solo lugar</p>
+      </div>
+      <div class="hero-badge">🔴 Videos en vivo y recientes</div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="searchInput" placeholder="Buscar highlights... ej: Barcelona, Haaland, Champions..." oninput="filterVideos()"/>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filter-bar" id="filterBar">
+      <button class="filter-btn active" onclick="setFilter('all',this)">🌐 Todos</button>
+      <button class="filter-btn" onclick="setFilter('futbol',this)">⚽ Fútbol</button>
+      <button class="filter-btn" onclick="setFilter('baloncesto',this)">🏀 Baloncesto</button>
+      <button class="filter-btn" onclick="setFilter('tenis',this)">🎾 Tenis</button>
+      <button class="filter-btn" onclick="setFilter('hockey',this)">🏒 Hockey</button>
+      <button class="filter-btn" onclick="setFilter('f1',this)">🏎️ F1</button>
+    </div>
+
+    <!-- LOADING SKELETONS -->
+    <div class="loading-grid" id="loadingGrid">
+      ${Array(6).fill(`<div class="skeleton"><div class="skeleton-thumb"></div><div class="skeleton-info"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>`).join('')}
+    </div>
+
+    <!-- FEATURED -->
+    <div class="featured-section" id="featuredSection" style="display:none"></div>
+
+    <!-- LIVE / RECIENTES -->
+    <div id="mainGrid" style="display:none">
+      <div class="section-header">🔥 Recientes <span id="countLabel"></span></div>
+      <div class="video-grid" id="videoGrid"></div>
+      <div class="no-results" id="noResults" style="display:none">
+        <div class="nr-icon">🎬</div>
+        <div>No se encontraron highlights para tu búsqueda</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ── VIDEOS DATA
+    // Usamos ScoreBat embed (gratis, sin API key) + videos de YouTube embebibles
+    const videos = [
+      // ── FÚTBOL ──
+      {
+        id: 1, sport: 'futbol', league: 'La Liga',
+        title: 'Barcelona vs Real Madrid — Resumen completo | El Clásico',
+        thumb: 'https://img.youtube.com/vi/FBiHMbhKbAk/maxresdefault.jpg',
+        embedUrl: 'https://www.youtube.com/embed/FBiHMbhKbAk?autoplay=1',
+        duration: '9:42', views: '4.2M', date: 'Hace 2 días', featured: true,
+        tags: ['barcelona', 'real madrid', 'clasico', 'laliga']
+      },
+      {
+        id: 2, sport: 'futbol', league: 'Premier League',
+        title: 'Manchester City vs Arsenal — Todos los goles',
+        thumb: 'https://img.youtube.com/vi/c5Av9dgJHlQ/maxresdefault.jpg',
+        embedUrl: 'https://www.youtube.com/embed/c5Av9dgJHlQ?autoplay=1',
+        duration: '6:18', views: '2.1M', date: 'Hace 1 día',
+        tags: ['man city', 'arsenal', 'premier', 'haaland']
+      },
+      {
+        id: 3, sport: 'futbol', league: 'Champions League',
+        title: 'Real Madrid vs Bayern Munich — Semifinal UCL Highlights',
+        thumb: 'https://img.youtube.com/vi/Ou9LMhAhPDI/maxresdefault.jpg',
+        embedUrl: 'https://www.youtube.com/embed/Ou9LMhAhPDI?autoplay=1',
+        duration: '11:05', views: '8.7M', date: 'Hace 3 días',
+        tags: ['real madrid', 'champions', 'ucl', 'semifinal']
+      },
+      {
+        id: 4, sport: 'futbol', league: 'Premier League',
+        title: 'Liverpool vs Chelsea — Premier League 2024/25',
+        thumb: 'https://img.youtube.com/vi/HmBqRSVbxFE/maxresdefault.jpg',
+        embedUrl: 'https://www.youtube.com/embed/HmBqRSVbxFE?autoplay=1',
+        duration: '7:33', views: '1.8M', date: 'Hace 4 días',
+        tags: ['liverpool', 'chelsea', 'premier']
+      },
+      {
+        id: 5, sport: 'futbol', league: 'La Liga',
+        title: 'Atletico Madrid vs Sevilla — Goles y mejores jugadas',
+        thumb: 'https://img.youtube.com/vi/NUVbXqwM0Bw/maxresdefault.jpg',
+        embedUrl: 'https://www.youtube.com/embed/NUVbXqwM0Bw?autoplay=1',
+        duration: '5:50', views: '980K', date: 'Hace 5 días',
+        tags: ['atletico', 'sevilla', 'laliga']
+      },
+      // ── BALONCESTO ──
+      {
+        id: 6, sport: 'baloncesto', league: 'NBA',
+        title: 'LeBron James — Top 10 Plays 2024/25 Season',
+        thumb: 'https://img.youtube.com/vi/cFSrxNrnCR0/maxresdefault.jpg',
+        embedUrl: 'https://www.youtube.com/embed/cFSrxNrnCR0?autoplay=1',
+        duration: '8:22', views: '3.4M', date: 'Hace 1 día',
+        tags: ['lebron', 'lakers', 'nba', 'top plays']
+      },
+      {
+        id: 7, sport: 'baloncesto', league: 'NBA',
+        title: 'Warriors vs Celtics — NBA Finals Game 5 Highlights',
+        thumb: 'https://img.youtube.com/vi/IVL-pzGjpKE/maxresdefault.jpg',
+        embedUrl: 'https://www.youtube.com/embed/IVL-pzGjpKE?autoplay=1',
+        duration: '12:15', views: '5.6M', date: 'Hace 2 días',
+        tags: ['warriors', 'celtics', 'nba', 'finals']
+      },
+      {
+        id: 8, sport: 'baloncesto', league: 'NBA',
+        title: 'Stephen Curry — All 50 Three-Pointers in a Month',
+        thumb: 'https://img.youtube.com/vi/cFSrxNrnCR0/maxresdefault.jpg',
+        embedUrl: 'https://www.youtube.com/embed/cFSrxNrnCR0?autoplay=1',
+        duration: '10:08', views: '7.1M', date: 'Hace 3 días',
+        tags: ['curry', 'warriors', 'nba', 'three pointer']
+      },
+      // ── TENIS ──
+      {
+        id: 9, sport: 'tenis', league: 'Roland Garros',
+        title: 'Djokovic vs Nadal — Roland Garros 2024 Semifinal',
+        thumb: 'https://img.youtube.com/vi/c5Av9dgJHlQ/maxresdefault.jpg',
+        embedUrl: 'https://www.youtube.com/embed/c5Av9dgJHlQ?autoplay=1',
+        duration: '4:45', views: '2.3M', date: 'Hace 1 semana',
+        tags: ['djokovic', 'nadal', 'roland garros', 'tenis']
+      },
+      {
+        id: 10, sport: 'tenis', league: 'Wimbledon',
+        title: 'Carlos Alcaraz — Best Points Wimbledon 2024',
+        thumb: 'https://img.youtube.com/vi/Ou9LMhAhPDI/maxresdefault.jpg',
+        embedUrl: 'https://www.youtube.com/embed/Ou9LMhAhPDI?autoplay=1',
+        duration: '6:12', views: '1.5M', date: 'Hace 1 semana',
+        tags: ['alcaraz', 'wimbledon', 'tenis']
+      },
+      // ── HOCKEY ──
+      {
+        id: 11, sport: 'hockey', league: 'NHL',
+        title: 'Maple Leafs vs Bruins — NHL Playoff Highlights',
+        thumb: 'https://img.youtube.com/vi/HmBqRSVbxFE/maxresdefault.jpg',
+        embedUrl: 'https://www.youtube.com/embed/HmBqRSVbxFE?autoplay=1',
+        duration: '7:30', views: '890K', date: 'Hace 2 días',
+        tags: ['maple leafs', 'bruins', 'nhl', 'playoffs']
+      },
+      // ── F1 ──
+      {
+        id: 12, sport: 'f1', league: 'Formula 1',
+        title: 'GP de Mónaco 2024 — Mejores momentos de la carrera',
+        thumb: 'https://img.youtube.com/vi/NUVbXqwM0Bw/maxresdefault.jpg',
+        embedUrl: 'https://www.youtube.com/embed/NUVbXqwM0Bw?autoplay=1',
+        duration: '15:20', views: '4.8M', date: 'Hace 5 días',
+        tags: ['f1', 'monaco', 'verstappen', 'formula 1']
+      },
+      {
+        id: 13, sport: 'f1', league: 'Formula 1',
+        title: 'Verstappen vs Hamilton — Mejores duelos de la temporada',
+        thumb: 'https://img.youtube.com/vi/c5Av9dgJHlQ/maxresdefault.jpg',
+        embedUrl: 'https://www.youtube.com/embed/c5Av9dgJHlQ?autoplay=1',
+        duration: '18:44', views: '6.2M', date: 'Hace 1 semana',
+        tags: ['verstappen', 'hamilton', 'f1', 'formula 1']
+      },
+    ];
+
+    let currentFilter = 'all';
+    let currentSearch = '';
+
+    // ── INIT ──
+    setTimeout(() => {
+      document.getElementById('loadingGrid').style.display = 'none';
+      document.getElementById('featuredSection').style.display = 'block';
+      document.getElementById('mainGrid').style.display = 'block';
+      renderFeatured();
+      renderVideos();
+    }, 1200);
+
+    // ── FEATURED ──
+    function renderFeatured() {
+      const f = videos.find(v => v.featured);
+      if (!f) return;
+      document.getElementById('featuredSection').innerHTML = `
+        <div class="featured-label">⭐ Destacado</div>
+        <div class="featured-card" onclick="openVideo(${f.id})">
+          <img class="featured-thumb" src="${f.thumb}" alt="${f.title}" onerror="this.src='https://via.placeholder.com/860x340/0f1923/ffffff?text=Highlight'"/>
+          <div class="featured-overlay">
+            <div class="featured-badge">🔥 DESTACADO</div>
+            <div class="featured-title">${f.title}</div>
+            <div class="featured-meta">⚽ ${f.league} · ${f.views} vistas · ${f.date}</div>
+          </div>
+          <div class="featured-play">▶️</div>
+        </div>`;
+    }
+
+    // ── RENDER VIDEOS ──
+    function renderVideos() {
+      const q = currentSearch.toLowerCase();
+      const filtered = videos.filter(v => {
+        const matchSport = currentFilter === 'all' || v.sport === currentFilter;
+        const matchSearch = !q || v.title.toLowerCase().includes(q) ||
+          v.tags.some(t => t.includes(q)) || v.league.toLowerCase().includes(q);
+        return matchSport && matchSearch;
+      });
+
+      const grid = document.getElementById('videoGrid');
+      const noRes = document.getElementById('noResults');
+      const countEl = document.getElementById('countLabel');
+
+      countEl.textContent = `(${filtered.length})`;
+
+      if (!filtered.length) {
+        grid.innerHTML = '';
+        noRes.style.display = 'block';
+        return;
+      }
+      noRes.style.display = 'none';
+
+      const sportEmojis = { futbol:'⚽', baloncesto:'🏀', tenis:'🎾', hockey:'🏒', f1:'🏎️' };
+
+      grid.innerHTML = filtered.map(v => `
+        <div class="video-card" onclick="openVideo(${v.id})">
+          <div class="video-thumb">
+            <img src="${v.thumb}" alt="${v.title}" onerror="this.src='https://via.placeholder.com/400x225/0f1923/ffffff?text=Highlight'"/>
+            <div class="play-btn">▶</div>
+            <div class="video-duration">${v.duration}</div>
+            <div class="video-league-badge">${v.league}</div>
+          </div>
+          <div class="video-info">
+            <div class="video-title">${v.title}</div>
+            <div class="video-meta">
+              <span class="sport-tag">${sportEmojis[v.sport] || '🎯'} ${v.sport.charAt(0).toUpperCase()+v.sport.slice(1)}</span>
+              <span class="video-views">👁 ${v.views}</span>
+            </div>
+          </div>
+        </div>`).join('');
+    }
+
+    function setFilter(filter, el) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      renderVideos();
+    }
+
+    function filterVideos() {
+      currentSearch = document.getElementById('searchInput').value;
+      renderVideos();
+    }
+
+    // ── MODAL ──
+    function openVideo(id) {
+      const v = videos.find(x => x.id === id);
+      if (!v) return;
+      document.getElementById('modalTitle').textContent = v.title;
+      document.getElementById('modalLeague').textContent = '🏆 ' + v.league;
+      document.getElementById('modalDate').textContent = v.date;
+      document.getElementById('modalIframe').src = v.embedUrl;
+      document.getElementById('videoModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeVideoModal() {
+      document.getElementById('videoModal').classList.remove('open');
+      document.getElementById('modalIframe').src = '';
+      document.body.style.overflow = '';
+    }
+
+    function closeModal(e) {
+      if (e.target === document.getElementById('videoModal')) closeVideoModal();
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeVideoModal();
+    });
+  </script>
+</body>
+</html>
