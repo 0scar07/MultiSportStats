@@ -1,0 +1,57 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MultiSport Stats — Registro</title>
+  <link rel="stylesheet" href="css/register.css"/>
+</head>
+<body class="auth-body">
+
+  <div class="auth-card">
+    <a class="auth-logo" href="login.html">🏆</a>
+    <h1>MultiSport Stats</h1>
+    <p class="subtitle">Crea tu cuenta gratis</p>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" placeholder="Juan"/>
+      </div>
+      <div class="form-group">
+        <label>Apellido</label>
+        <input type="text" placeholder="Pérez"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" placeholder="example@email.com"/>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <div class="input-wrap">
+        <input type="password" id="pwd1" placeholder="••••••••••"/>
+        <button class="eye-btn" onclick="togglePwd('pwd1', this)">👁</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Confirmar Password</label>
+      <div class="input-wrap">
+        <input type="password" id="pwd2" placeholder="••••••••••"/>
+        <button class="eye-btn" onclick="togglePwd('pwd2', this)">👁</button>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="window.location.href='dashboard.html'">Crear Cuenta</button>
+
+    <div class="auth-footer">
+      ¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a>
+    </div>
+  </div>
+
+
+</body>
+</html>
