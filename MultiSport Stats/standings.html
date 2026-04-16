@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MultiSport Stats — Standings</title>
+  <link rel="stylesheet" href="standings.css">
+  <style>
+    .live-topbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(90deg, #0f1923, #1a2535);
+      color: white;
+      padding: 9px 18px;
+      border-radius: 10px;
+      margin-bottom: 22px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .pulse-ring {
+      position: relative;
+      width: 14px; height: 14px; flex-shrink: 0;
+    }
+    .pulse-ring::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 50%; background: #22c55e;
+      animation: ringPulse 1.5s infinite;
+    }
+    .pulse-ring::after {
+      content: '';
+      position: absolute; inset: 3px;
+      border-radius: 50%; background: #22c55e;
+    }
+    @keyframes ringPulse {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(2.4); opacity: 0; }
+    }
+    .last-updated { margin-left: auto; color: #8a9ab0; font-weight: 400; font-size: 12px; }
+
+    @keyframes rowFlash {
+      0% { background: rgba(34,197,94,0.18); }
+      100% { background: transparent; }
+    }
+    .row-flash { animation: rowFlash 1.2s ease-out; }
+
+    .pos-change { font-size: 10px; margin-left: 4px; font-weight: 700; }
+    .pos-up { color: #22c55e; }
+    .pos-down { color: #ef4444; }
+
+    @keyframes ptsFlash {
+      0% { background: #22c55e; color: white; transform: scale(1.15); }
+      100% { background: #2e7d32; color: white; transform: scale(1); }
+    }
+    .pts-flash { animation: ptsFlash 0.8s ease-out; }
+
+    .update-toast {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      background: #1a2535;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .update-toast.show { transform: translateY(0); opacity: 1; }
+    .update-toast .dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: blink 1s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    @keyframes rowIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .row-in { animation: rowIn 0.4s ease-out; }
+  </style>
+</head>
+<body class="app-body">
+
+  <div class="update-toast" id="updateToast">
+    <span class="dot"></span>
+    <span id="toastMsg">Tabla actualizada</span>
+  </div>
+
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="index.html">
+      <div class="sidebar-logo-icon">🏆</div>
+      <div class="sidebar-logo-text">Multi<span>Sport</span><br>Stats</div>
+    </a>
+    <nav class="sidebar-nav">
+      <a class="nav-item" href="index.html"><span class="nav-icon">🏠</span> Dashboard</a>
+      <a class="nav-item" href="live.html"><span class="nav-icon">📊</span> Live Matches</a>
+      <a class="nav-item active" href="standings.html"><span class="nav-icon">🏅</span> Standings</a>
+      <a class="nav-item" href="about.html"><span class="nav-icon">ℹ️</span> About Us</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a class="logout-btn" href="login.html"><span>↩</span> Logout</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-title">Standings</div>
+
+    <div class="live-topbar">
+      <div class="pulse-ring"></div>
+      <span>Tabla actualizada en tiempo real</span>
+      <span class="last-updated" id="lastUpdated">Última actualización: ahora</span>
+    </div>
+
+    <div class="filter-tabs" id="leagueTabs">
+      <div class="tab active" onclick="switchLeague('laliga',this)">⚽ La Liga</div>
+      <div class="tab" onclick="switchLeague('premier',this)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier</div>
+      <div class="tab" onclick="switchLeague('nba',this)">🏀 NBA</div>
+      <div class="tab" onclick="switchLeague('nhl',this)">🏒 NHL</div>
+    </div>
+
+    <div class="section-title" id="sectionTitle">La Liga — Temporada 2024/25</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Pos</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>Pts</th></tr>
+        </thead>
+        <tbody id="standingsBody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    const leagues = {
+      laliga: {
+        title: 'La Liga — Temporada 2024/25',
+        teams: [
+          {name:'Barcelona', crest:'https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg', p:32, w:27, d:4, l:1, gf:78, ga:22},
+          {name:'Real Madrid', crest:'https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg', p:32, w:26, d:4, l:2, gf:72, ga:24},
+          {name:'Atletico Madrid', crest:'', p:32, w:24, d:6, l:2, gf:65, ga:30},
+          {name:'Sevilla', crest:'https://upload.wikimedia.org/wikipedia/en/3/3b/Sevilla_FC_logo.svg', p:32, w:21, d:8, l:3, gf:58, ga:35},
+          {name:'Valencia', crest:'https://upload.wikimedia.org/wikipedia/en/c/ce/Valenciacf.svg', p:32, w:18, d:7, l:7, gf:50, ga:42},
+          {name:'Real Sociedad', crest:'https://upload.wikimedia.org/wikipedia/en/f/f1/Real_Sociedad_logo.svg', p:32, w:16, d:9, l:7, gf:47, ga:40},
+          {name:'Villarreal', crest:'https://upload.wikimedia.org/wikipedia/en/b/b9/Villarreal_CF_logo-en.svg', p:32, w:15, d:6, l:11, gf:44, ga:44},
+          {name:'Athletic Club', crest:'https://upload.wikimedia.org/wikipedia/en/9/98/Club_Athletic_de_Bilbao_logo.svg', p:32, w:14, d:7, l:11, gf:41, ga:43},
+        ]
+      },
+      premier: {
+        title: 'Premier League — 2024/25',
+        teams: [
+          {name:'Man City', crest:'', p:32, w:25, d:5, l:2, gf:80, ga:25},
+          {name:'Arsenal', crest:'', p:32, w:24, d:5, l:3, gf:72, ga:27},
+          {name:'Liverpool', crest:'', p:32, w:23, d:6, l:3, gf:70, ga:30},
+          {name:'Chelsea', crest:'', p:32, w:20, d:6, l:6, gf:60, ga:38},
+          {name:'Man United', crest:'', p:32, w:17, d:5, l:10, gf:52, ga:45},
+          {name:'Tottenham', crest:'', p:32, w:15, d:7, l:10, gf:49, ga:48},
+        ]
+      },
+      nba: {
+        title: 'NBA — Temporada 2024/25',
+        teams: [
+          {name:'Boston Celtics', crest:'', p:60, w:48, d:0, l:12, gf:0, ga:0},
+          {name:'Oklahoma City', crest:'', p:60, w:46, d:0, l:14, gf:0, ga:0},
+          {name:'Golden State', crest:'', p:60, w:42, d:0, l:18, gf:0, ga:0},
+          {name:'LA Lakers', crest:'', p:60, w:38, d:0, l:22, gf:0, ga:0},
+          {name:'Miami Heat', crest:'', p:60, w:35, d:0, l:25, gf:0, ga:0},
+          {name:'Chicago Bulls', crest:'', p:60, w:30, d:0, l:30, gf:0, ga:0},
+        ]
+      },
+      nhl: {
+        title: 'NHL — Temporada 2024/25',
+        teams: [
+          {name:'Maple Leafs', crest:'', p:62, w:38, d:6, l:12, gf:220, ga:185},
+          {name:'Bruins', crest:'', p:62, w:36, d:8, l:12, gf:210, ga:190},
+          {name:'Canadiens', crest:'', p:62, w:32, d:6, l:18, gf:195, ga:200},
+          {name:'Rangers', crest:'', p:62, w:30, d:4, l:22, gf:185, ga:210},
+          {name:'Flyers', crest:'', p:62, w:25, d:6, l:25, gf:170, ga:218},
+        ]
+      }
+    };
+
+    let currentLeague = 'laliga';
+    let secondsAgo = 0;
+    let prevPositions = {};
+
+    function pts(t) { return t.w * 3 + t.d; }
+
+    function sortTeams(teams) {
+      return [...teams].sort((a,b) => pts(b)-pts(a) || (b.gf-b.ga)-(a.gf-a.ga));
+    }
+
+    function renderTable(flashTeam=null) {
+      const league = leagues[currentLeague];
+      const sorted = sortTeams(league.teams);
+      const tbody = document.getElementById('standingsBody');
+      tbody.innerHTML = '';
+      sorted.forEach((t, i) => {
+        const pos = i+1;
+        const prevPos = prevPositions[t.name];
+        let changeHtml = '';
+        if (prevPos !== undefined && prevPos !== pos) {
+          if (pos < prevPos) changeHtml = '<span class="pos-change pos-up">▲</span>';
+          else changeHtml = '<span class="pos-change pos-down">▼</span>';
+        }
+        prevPositions[t.name] = pos;
+
+        const p = pts(t);
+        const tr = document.createElement('tr');
+        tr.className = 'row-in';
+        if (flashTeam && t.name === flashTeam) tr.classList.add('row-flash');
+
+        const crestHtml = t.crest ? `<img class="team-crest" src="${t.crest}" alt="${t.name}" onerror="this.style.display='none'"/>` : '';
+        const nbaStat = currentLeague === 'nba' ? '' : `<td>${t.gf}</td><td>${t.ga}</td>`;
+
+        tr.innerHTML = `
+          <td><span class="pos-num">${pos}</span>${changeHtml}</td>
+          <td><div class="td-team">${crestHtml} ${t.name}</div></td>
+          <td>${t.p}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td>
+          ${nbaStat}
+          <td><span class="pts${flashTeam===t.name?' pts-flash':''}${''}">${p}</span></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function switchLeague(id, el) {
+      currentLeague = id;
+      prevPositions = {};
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('sectionTitle').textContent = leagues[id].title;
+      renderTable();
+    }
+
+    function showUpdateToast(msg) {
+      const toast = document.getElementById('updateToast');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function simulateLiveUpdate() {
+      const league = leagues[currentLeague];
+      const team = league.teams[Math.floor(Math.random()*league.teams.length)];
+      const event = Math.random();
+      let msg = '';
+
+      if (event < 0.5) {
+        team.w++; team.p++;
+        if (currentLeague !== 'nba') team.gf += Math.floor(Math.random()*2)+1;
+        msg = `⚽ ${team.name} gana · tabla actualizada`;
+      } else if (event < 0.75) {
+        team.d++; team.p++;
+        msg = `🤝 ${team.name} empata · tabla actualizada`;
+      } else {
+        team.l++; team.p++;
+        msg = `📊 ${team.name} pierde · tabla actualizada`;
+      }
+
+      secondsAgo = 0;
+      document.getElementById('lastUpdated').textContent = 'Actualizado ahora ✓';
+      renderTable(team.name);
+      showUpdateToast(msg);
+
+      setTimeout(simulateLiveUpdate, 12000 + Math.random()*18000);
+    }
+
+    setInterval(() => {
+      if (secondsAgo > 0) {
+        secondsAgo++;
+        document.getElementById('lastUpdated').textContent = `Última actualización: hace ${secondsAgo}s`;
+      }
+    }, 1000);
+
+    renderTable();
+    setTimeout(simulateLiveUpdate, 8000);
+  </script>
+</body>
+</html>

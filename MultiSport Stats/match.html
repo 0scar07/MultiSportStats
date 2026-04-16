@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MultiSport Stats — Partido</title>
+  <link rel="stylesheet" href="dasboard.css">
+  <style>
+    .match-hero {
+      background: linear-gradient(135deg, #0f1923 0%, #1a2535 60%, #0f3023 100%);
+      border-radius: 16px;
+      padding: 32px 36px 24px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .match-hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 260px; height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(34,197,94,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .hero-league {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: #66bb6a;
+      text-transform: uppercase;
+    }
+    .hero-live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(34,197,94,0.15);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: #22c55e;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .hero-live-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.15} }
+    .hero-scoreboard {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 20px;
+    }
+    .hero-team {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .hero-team-crest {
+      width: 64px; height: 64px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+    }
+    .hero-team-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: white;
+      text-align: center;
+    }
+    .hero-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .hero-score {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 62px;
+      font-weight: 800;
+      color: white;
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+    .hero-score span { color: #22c55e; margin: 0 6px; font-size: 40px; opacity: 0.6; }
+    .hero-minute {
+      font-size: 13px;
+      font-weight: 700;
+      color: #22c55e;
+      background: rgba(34,197,94,0.12);
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .hero-events { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; min-height: 40px; }
+    .hero-event { font-size: 12px; color: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 6px; }
+    .hero-event.home { justify-content: flex-start; }
+    .hero-event.away { justify-content: flex-end; }
+    .hero-event .ev-min { color: #22c55e; font-weight: 700; min-width: 28px; font-size: 11px; }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #8a9ab0;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      margin-bottom: 20px;
+      transition: color .2s;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .back-btn:hover { color: #22c55e; }
+
+    .match-tabs {
+      display: flex;
+      gap: 0;
+      background: white;
+      border-radius: 12px;
+      padding: 5px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border: 1px solid #e2e8f0;
+    }
+    .match-tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px 0;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #8a9ab0;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .match-tab:hover { color: #1a2535; }
+    .match-tab.active { background: #0f1923; color: white; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; animation: fadeIn .25s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+    .timeline {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .timeline-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f1923;
+      margin-bottom: 18px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tl-event {
+      display: grid;
+      grid-template-columns: 1fr 56px 1fr;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f2f5;
+      gap: 8px;
+    }
+    .tl-event:last-child { border-bottom: none; }
+    .tl-left { text-align: right; }
+    .tl-right { text-align: left; }
+    .tl-player { font-weight: 600; font-size: 14px; color: #1a2535; }
+    .tl-sub { font-size: 11px; color: #8a9ab0; margin-top: 2px; }
+    .tl-center { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .tl-icon { font-size: 18px; }
+    .tl-min { font-size: 11px; font-weight: 700; color: #22c55e; }
+
+    .stats-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f2f5;
+    }
+    .stats-row:last-child { border-bottom: none; }
+    .stat-val-home, .stat-val-away {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f1923;
+      width: 36px;
+      text-align: center;
+    }
+    .stat-bar-wrap { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #8a9ab0;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .stat-bars { display: flex; height: 6px; border-radius: 6px; overflow: hidden; gap: 2px; }
+    .stat-bar-home { background: #2e7d32; border-radius: 6px 0 0 6px; }
+    .stat-bar-away { background: #dc2626; border-radius: 0 6px 6px 0; }
+
+    .lineup-wrap {
+      background: white;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .lineup-header { display: grid; grid-template-columns: 1fr 1fr; }
+    .lineup-team-header {
+      padding: 16px 20px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .lineup-team-header.home { background: #0f1923; color: white; }
+    .lineup-team-header.away { background: #dc2626; color: white; text-align: right; }
+
+    .pitch-container {
+      position: relative;
+      background: linear-gradient(180deg, #1a6b35 0%, #22883f 50%, #1a6b35 100%);
+      padding: 20px;
+      min-height: 380px;
+      overflow: hidden;
+    }
+    .pitch-container::before {
+      content: '';
+      position: absolute;
+      inset: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 4px;
+    }
+    .pitch-mid-line {
+      position: absolute;
+      left: 16px; right: 16px; top: 50%;
+      height: 2px;
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-50%);
+    }
+    .pitch-mid-circle {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 80px; height: 80px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .pitch-area-top {
+      position: absolute;
+      top: 16px; left: 50%;
+      width: 160px; height: 70px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top: none;
+      transform: translateX(-50%);
+    }
+    .pitch-area-bottom {
+      position: absolute;
+      bottom: 16px; left: 50%;
+      width: 160px; height: 70px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-bottom: none;
+      transform: translateX(-50%);
+    }
+    .formation-home, .formation-away {
+      position: absolute;
+      left: 0; right: 0;
+    }
+    .formation-home { top: 10px; bottom: 50%; }
+    .formation-away { top: 50%; bottom: 10px; }
+    .player-dot-row {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      position: absolute;
+      left: 20px; right: 20px;
+    }
+    .player-dot { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
+    .player-dot .dot {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; color: white;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+      transition: transform .15s;
+    }
+    .player-dot:hover .dot { transform: scale(1.15); }
+    .player-dot .dot.home-dot { background: #0f1923; border: 2px solid #66bb6a; }
+    .player-dot .dot.away-dot { background: #dc2626; border: 2px solid #fca5a5; }
+    .player-dot .pname {
+      font-size: 9px; font-weight: 700; color: white;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      white-space: nowrap; max-width: 52px;
+      overflow: hidden; text-overflow: ellipsis; text-align: center;
+    }
+
+    .bench-section { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid #e2e8f0; }
+    .bench-col { padding: 16px 20px; }
+    .bench-col:first-child { border-right: 1px solid #e2e8f0; }
+    .bench-title { font-size: 10px; font-weight: 700; color: #8a9ab0; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .bench-player {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 0; font-size: 13px; color: #1a2535; font-weight: 500;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .bench-player:last-child { border-bottom: none; }
+    .bench-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #f0f2f5; color: #8a9ab0;
+      font-size: 10px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
+    .stats-card {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .stats-teams-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f0f2f5;
+    }
+    .sth-team { display: flex; align-items: center; gap: 10px; }
+    .sth-team img { width: 36px; height: 36px; object-fit: contain; }
+    .sth-name { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 800; }
+    .sth-vs { font-size: 13px; color: #8a9ab0; font-weight: 600; }
+
+    .pos-table { background: white; border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .pos-table table { width: 100%; border-collapse: collapse; }
+    .pos-table thead tr { background: #0f1923; color: white; }
+    .pos-table thead th { padding: 12px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; text-align: left; }
+    .pos-table thead th:not(:nth-child(2)) { text-align: center; }
+    .pos-table tbody tr { border-bottom: 1px solid #f0f2f5; transition: background .15s; }
+    .pos-table tbody tr:last-child { border-bottom: none; }
+    .pos-table tbody tr:hover { background: #f8fffe; }
+    .pos-table tbody tr.highlight-home { background: rgba(46,125,50,0.06); }
+    .pos-table tbody tr.highlight-away { background: rgba(220,38,38,0.05); }
+    .pos-table td { padding: 11px 14px; font-size: 13px; color: #1a2535; text-align: center; }
+    .pos-table td:nth-child(2) { text-align: left; }
+    .pos-num-cell { width: 28px; height: 28px; border-radius: 50%; background: #f0f2f5; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; color: #1a2535; }
+    .pos-num-cell.top3 { background: #0f1923; color: white; }
+    .td-team-name { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+    .td-team-name img { width: 22px; height: 22px; object-fit: contain; }
+    .pts-cell { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 800; color: #0f1923; }
+    .form-badges { display: flex; gap: 3px; justify-content: center; }
+    .fb { width: 18px; height: 18px; border-radius: 4px; font-size: 9px; font-weight: 800; display:flex; align-items:center; justify-content:center; color:white; }
+    .fb-w { background: #22c55e; }
+    .fb-d { background: #f59e0b; }
+    .fb-l { background: #ef4444; }
+  </style>
+</head>
+<body class="app-body">
+
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="index.html">
+      <div class="sidebar-logo-icon">🏆</div>
+      <div class="sidebar-logo-text">Multi<span>Sport</span><br>Stats</div>
+    </a>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" href="index.html"><span class="nav-icon">🏠</span> Dashboard</a>
+      <a class="nav-item" href="live.html"><span class="nav-icon">📊</span> Live Matches</a>
+      <a class="nav-item" href="standings.html"><span class="nav-icon">🏅</span> Standings</a>
+      <a class="nav-item" href="about.html"><span class="nav-icon">ℹ️</span> About Us</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a class="logout-btn" href="login.html"><span>↩</span> Logout</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <button class="back-btn" onclick="history.back()">← Volver</button>
+
+    <div class="match-hero">
+      <div class="hero-top">
+        <span class="hero-league" id="heroLeague">⚽ La Liga</span>
+        <span class="hero-live-badge"><span class="hero-live-dot"></span>EN VIVO</span>
+      </div>
+      <div class="hero-scoreboard">
+        <div class="hero-team home">
+          <img class="hero-team-crest" id="heroCrestHome" src="" alt="home" onerror="this.style.display='none'"/>
+          <div class="hero-team-name" id="heroNameHome">Barcelona</div>
+          <div class="hero-events" id="heroEventsHome"></div>
+        </div>
+        <div class="hero-center">
+          <div class="hero-score" id="heroScore">2<span>–</span>1</div>
+          <div class="hero-minute" id="heroMinute">78'</div>
+        </div>
+        <div class="hero-team away">
+          <img class="hero-team-crest" id="heroCrestAway" src="" alt="away" onerror="this.style.display='none'"/>
+          <div class="hero-team-name" id="heroNameAway">Real Madrid</div>
+          <div class="hero-events" id="heroEventsAway"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="match-tabs">
+      <div class="match-tab active" onclick="showTab('resumen',this)">Resumen</div>
+      <div class="match-tab" onclick="showTab('alineaciones',this)">Alineaciones</div>
+      <div class="match-tab" onclick="showTab('estadisticas',this)">Estadísticas</div>
+      <div class="match-tab" onclick="showTab('posiciones',this)">Posiciones</div>
+    </div>
+
+    <div class="tab-panel active" id="tab-resumen">
+      <div class="timeline" id="timelineWrap"></div>
+    </div>
+
+    <div class="tab-panel" id="tab-alineaciones">
+      <div class="lineup-wrap">
+        <div class="lineup-header">
+          <div class="lineup-team-header home" id="lineupTitleHome">Barcelona — 4-3-3</div>
+          <div class="lineup-team-header away" id="lineupTitleAway">Real Madrid — 4-4-2</div>
+        </div>
+        <div class="pitch-container">
+          <div class="pitch-mid-line"></div>
+          <div class="pitch-mid-circle"></div>
+          <div class="pitch-area-top"></div>
+          <div class="pitch-area-bottom"></div>
+          <div class="formation-home" id="formationHome"></div>
+          <div class="formation-away" id="formationAway"></div>
+        </div>
+        <div class="bench-section">
+          <div class="bench-col">
+            <div class="bench-title">Suplentes</div>
+            <div id="benchHome"></div>
+          </div>
+          <div class="bench-col">
+            <div class="bench-title">Suplentes</div>
+            <div id="benchAway"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-estadisticas">
+      <div class="stats-card">
+        <div class="stats-teams-header">
+          <div class="sth-team">
+            <img id="statsImgHome" src="" alt="home" onerror="this.style.display='none'"/>
+            <span class="sth-name" id="statsNameHome">Barcelona</span>
+          </div>
+          <span class="sth-vs">vs</span>
+          <div class="sth-team" style="flex-direction:row-reverse">
+            <img id="statsImgAway" src="" alt="away" onerror="this.style.display='none'"/>
+            <span class="sth-name" id="statsNameAway">Real Madrid</span>
+          </div>
+        </div>
+        <div id="statsRows"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-posiciones">
+      <div class="pos-table" id="posTable"></div>
+    </div>
+  </main>
+
+  <script>
+    const matchData = {
+      'barcelona-realmadrid': {
+        home: { name: 'Barcelona', crest: 'https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg' },
+        away: { name: 'Real Madrid', crest: 'https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg' },
+        league: '⚽ La Liga', score: [2,1], minute: 78,
+        events: [
+          { min:23, type:'goal', team:'home', player:'Lewandowski', assist:'Pedri' },
+          { min:41, type:'yellow', team:'away', player:'Camavinga' },
+          { min:55, type:'goal', team:'away', player:'Vinicius Jr.', assist:'Bellingham' },
+          { min:67, type:'goal', team:'home', player:'Pedri', assist:'Yamal' },
+          { min:72, type:'red', team:'away', player:'Rüdiger' },
+          { min:75, type:'sub', team:'home', player:'Gavi ↓ / Ferran ↑' },
+        ],
+        formation: {
+          home: {
+            name: '4-3-3',
+            rows: [
+              [{num:1, name:'ter Stegen'}],
+              [{num:23, name:'Koundé'},{num:15, name:'Iñigo'},{num:4, name:'Araujo'},{num:3, name:'Baldé'}],
+              [{num:8, name:'Pedri'},{num:5, name:'Sergio R.'},{num:16, name:'Fermín'}],
+              [{num:17, name:'Yamal'},{num:9, name:'Lewand.'},{num:11, name:'Ferran'}],
+            ],
+            bench: [{num:13,name:'Peña'},{num:2,name:'Martínez'},{num:22,name:'Gavi'},{num:7,name:'Torres'},{num:19,name:'Fati'}],
+          },
+          away: {
+            name: '4-4-2',
+            rows: [
+              [{num:1, name:'Courtois'}],
+              [{num:2, name:'Carvajal'},{num:6, name:'Nacho'},{num:22, name:'Rüdiger'},{num:3, name:'Mendy'}],
+              [{num:12, name:'Valverde'},{num:8, name:'Kroos'},{num:10, name:'Modrić'},{num:25, name:'Camavinga'}],
+              [{num:20, name:'Vinicius'},{num:9, name:'Benzema'}],
+            ],
+            bench: [{num:13,name:'Lunin'},{num:5,name:'Tchouameni'},{num:14,name:'Asensio'},{num:21,name:'Rodrygo'},{num:15,name:'Ceballos'}],
+          }
+        },
+        stats: [
+          { label:'Posesión', home:62, away:38, unit:'%' },
+          { label:'Tiros totales', home:14, away:8, unit:'' },
+          { label:'Tiros a puerta', home:7, away:3, unit:'' },
+          { label:'Pases', home:542, away:321, unit:'' },
+          { label:'Precisión pases', home:91, away:84, unit:'%' },
+          { label:'Faltas', home:9, away:14, unit:'' },
+          { label:'Córners', home:6, away:2, unit:'' },
+          { label:'Tarjetas amarillas', home:1, away:2, unit:'' },
+          { label:'Fueras de juego', home:3, away:5, unit:'' },
+        ],
+        standings: [
+          { name:'Barcelona', crest:'https://crests.football-data.org/81.svg', p:32, w:27, d:4, l:1, gf:78, ga:22, form:['W','W','W','D','W'], isHome:true },
+          { name:'Real Madrid', crest:'hhttps://crests.football-data.org/86.png', p:32, w:26, d:4, l:2, gf:72, ga:24, form:['W','L','W','W','D'], isAway:true },
+          { name:'Atletico Madrid', crest:'', p:32, w:24, d:6, l:2, gf:65, ga:30, form:['W','W','D','W','L'] },
+          { name:'Sevilla', crest:'https://upload.wikimedia.org/wikipedia/en/3/3b/Sevilla_FC_logo.svg', p:32, w:21, d:8, l:3, gf:58, ga:35, form:['D','W','W','D','W'] },
+          { name:'Valencia', crest:'', p:32, w:18, d:7, l:7, gf:50, ga:42, form:['L','W','D','W','L'] },
+          { name:'Real Sociedad', crest:'', p:32, w:16, d:9, l:7, gf:47, ga:40, form:['W','D','L','W','W'] },
+          { name:'Villarreal', crest:'', p:32, w:15, d:6, l:11, gf:44, ga:44, form:['L','L','W','D','W'] },
+          { name:'Athletic Club', crest:'', p:32, w:14, d:7, l:11, gf:41, ga:43, form:['D','W','L','W','D'] },
+        ]
+      },
+      'mancity-arsenal': {
+        home: { name: 'Man City', crest: 'https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg' },
+        away: { name: 'Arsenal', crest: 'https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg' },
+        league: '⚽ Premier League', score: [3,2], minute: 89,
+        events: [
+          { min:12, type:'goal', team:'home', player:'Haaland', assist:'De Bruyne' },
+          { min:29, type:'goal', team:'away', player:'Saka', assist:'Ødegaard' },
+          { min:45, type:'yellow', team:'home', player:'Rodri' },
+          { min:54, type:'goal', team:'home', player:'De Bruyne', assist:'Bernardo' },
+          { min:63, type:'goal', team:'away', player:'Martinelli', assist:'Trossard' },
+          { min:71, type:'goal', team:'home', player:'Haaland', assist:'Gündogan' },
+          { min:82, type:'sub', team:'away', player:'Ødegaard ↓ / Vieira ↑' },
+        ],
+        formation: {
+          home: {
+            name: '4-3-3',
+            rows: [
+              [{num:31, name:'Ederson'}],
+              [{num:2, name:'Walker'},{num:5, name:'Stones'},{num:14, name:'Laporte'},{num:6, name:'Gvardiol'}],
+              [{num:16, name:'Rodri'},{num:17, name:'De Bruyne'},{num:20, name:'Bernardo'}],
+              [{num:26, name:'Mahrez'},{num:9, name:'Haaland'},{num:47, name:'Foden'}],
+            ],
+            bench: [{num:13,name:'Ortega'},{num:3,name:'Akanji'},{num:24,name:'Gündogan'},{num:10,name:'Grealish'},{num:7,name:'Sterling'}],
+          },
+          away: {
+            name: '4-3-3',
+            rows: [
+              [{num:1, name:'Raya'}],
+              [{num:4, name:'White'},{num:6, name:'Gabriel'},{num:12, name:'Saliba'},{num:35, name:'Zinchenko'}],
+              [{num:29, name:'Havertz'},{num:8, name:'Ødegaard'},{num:34, name:'Xhaka'}],
+              [{num:7, name:'Saka'},{num:9, name:'Jesus'},{num:11, name:'Martinelli'}],
+            ],
+            bench: [{num:22,name:'Ramsdale'},{num:2,name:'Tomiyasu'},{num:19,name:'Trossard'},{num:41,name:'Rice'},{num:21,name:'Vieira'}],
+          }
+        },
+        stats: [
+          { label:'Posesión', home:55, away:45, unit:'%' },
+          { label:'Tiros totales', home:18, away:11, unit:'' },
+          { label:'Tiros a puerta', home:9, away:5, unit:'' },
+          { label:'Pases', home:489, away:398, unit:'' },
+          { label:'Precisión pases', home:88, away:86, unit:'%' },
+          { label:'Faltas', home:11, away:13, unit:'' },
+          { label:'Córners', home:8, away:4, unit:'' },
+          { label:'Tarjetas amarillas', home:2, away:1, unit:'' },
+          { label:'Fueras de juego', home:4, away:3, unit:'' },
+        ],
+        standings: [
+          { name:'Man City', crest:'', p:32, w:25, d:5, l:2, gf:80, ga:25, form:['W','W','W','W','D'], isHome:true },
+          { name:'Arsenal', crest:'', p:32, w:24, d:5, l:3, gf:72, ga:27, form:['W','L','W','W','W'], isAway:true },
+          { name:'Liverpool', crest:'', p:32, w:23, d:6, l:3, gf:70, ga:30, form:['W','W','D','W','W'] },
+          { name:'Chelsea', crest:'', p:32, w:20, d:6, l:6, gf:60, ga:38, form:['D','W','L','W','W'] },
+          { name:'Man United', crest:'', p:32, w:17, d:5, l:10, gf:52, ga:45, form:['L','W','D','L','W'] },
+          { name:'Tottenham', crest:'', p:32, w:15, d:7, l:10, gf:49, ga:48, form:['W','D','W','L','D'] },
+        ]
+      }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const matchId = params.get('match') || 'barcelona-realmadrid';
+    const match = matchData[matchId] || matchData['barcelona-realmadrid'];
+
+    function eventIcon(type) {
+      return { goal:'⚽', yellow:'🟨', red:'🟥', sub:'🔄' }[type] || '';
+    }
+
+    // Hero
+    document.getElementById('heroLeague').textContent = match.league;
+    document.getElementById('heroNameHome').textContent = match.home.name;
+    document.getElementById('heroNameAway').textContent = match.away.name;
+    document.getElementById('heroCrestHome').src = match.home.crest;
+    document.getElementById('heroCrestAway').src = match.away.crest;
+    document.getElementById('heroScore').innerHTML = `${match.score[0]}<span>–</span>${match.score[1]}`;
+    document.getElementById('heroMinute').textContent = match.minute+"'";
+    document.getElementById('statsImgHome').src = match.home.crest;
+    document.getElementById('statsImgAway').src = match.away.crest;
+    document.getElementById('statsNameHome').textContent = match.home.name;
+    document.getElementById('statsNameAway').textContent = match.away.name;
+
+    document.getElementById('heroEventsHome').innerHTML = match.events.filter(e=>e.team==='home').map(e=>`
+      <div class="hero-event home"><span class="ev-min">${e.min}'</span><span>${eventIcon(e.type)} ${e.player}</span></div>`).join('');
+    document.getElementById('heroEventsAway').innerHTML = match.events.filter(e=>e.team==='away').map(e=>`
+      <div class="hero-event away"><span>${e.player} ${eventIcon(e.type)}</span><span class="ev-min">${e.min}'</span></div>`).join('');
+
+    // Resumen
+    document.getElementById('timelineWrap').innerHTML = `
+      <div class="timeline-title">📋 Resumen del partido</div>
+      ${match.events.map(e=>`
+        <div class="tl-event">
+          <div class="tl-left">${e.team==='home'?`<div class="tl-player">${e.player}</div>${e.assist?`<div class="tl-sub">Asist: ${e.assist}</div>`:''}`:''}
+          </div>
+          <div class="tl-center"><div class="tl-icon">${eventIcon(e.type)}</div><div class="tl-min">${e.min}'</div></div>
+          <div class="tl-right">${e.team==='away'?`<div class="tl-player">${e.player}</div>${e.assist?`<div class="tl-sub">Asist: ${e.assist}</div>`:''}`:''}
+          </div>
+        </div>`).join('')}
+      <div style="margin-top:20px;border-top:2px solid #f0f2f5;padding-top:16px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:#0f1923;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Estadísticas rápidas</div>
+        ${match.stats.slice(0,4).map(s=>{
+          const t=s.home+s.away||1, hw=(s.home/t*100).toFixed(0), aw=(s.away/t*100).toFixed(0);
+          return `<div class="stats-row">
+            <div class="stat-val-home">${s.home}${s.unit}</div>
+            <div class="stat-bar-wrap"><div class="stat-bars"><div class="stat-bar-home" style="width:${hw}%"></div><div class="stat-bar-away" style="width:${aw}%"></div></div><div class="stat-label">${s.label}</div></div>
+            <div class="stat-val-away">${s.away}${s.unit}</div>
+          </div>`;}).join('')}
+      </div>`;
+
+    // Alineaciones
+    function buildFormation(containerId, rows, isHome, dotClass) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      const rowsCopy = isHome ? [...rows] : [...rows].reverse();
+      const rowPositions = isHome ? [85,65,45,15] : [15,35,55,85];
+      rowsCopy.forEach((row,i) => {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'player-dot-row';
+        rowDiv.style.bottom = rowPositions[i]+'%';
+        row.forEach(p => {
+          const pd = document.createElement('div');
+          pd.className = 'player-dot';
+          pd.innerHTML = `<div class="dot ${dotClass}">${p.num}</div><div class="pname">${p.name}</div>`;
+          rowDiv.appendChild(pd);
+        });
+        container.appendChild(rowDiv);
+      });
+    }
+    const f = match.formation;
+    document.getElementById('lineupTitleHome').textContent = `${match.home.name} — ${f.home.name}`;
+    document.getElementById('lineupTitleAway').textContent = `${match.away.name} — ${f.away.name}`;
+    buildFormation('formationHome', f.home.rows, true, 'home-dot');
+    buildFormation('formationAway', f.away.rows, false, 'away-dot');
+    document.getElementById('benchHome').innerHTML = f.home.bench.map(p=>`<div class="bench-player"><span class="bench-num">${p.num}</span>${p.name}</div>`).join('');
+    document.getElementById('benchAway').innerHTML = f.away.bench.map(p=>`<div class="bench-player"><span class="bench-num">${p.num}</span>${p.name}</div>`).join('');
+
+    // Estadísticas
+    document.getElementById('statsRows').innerHTML = match.stats.map(s=>{
+      const t=s.home+s.away||1, hw=(s.home/t*100).toFixed(1), aw=(s.away/t*100).toFixed(1);
+      return `<div class="stats-row">
+        <div class="stat-val-home">${s.home}${s.unit}</div>
+        <div class="stat-bar-wrap"><div class="stat-bars"><div class="stat-bar-home" style="width:${hw}%"></div><div class="stat-bar-away" style="width:${aw}%"></div></div><div class="stat-label">${s.label}</div></div>
+        <div class="stat-val-away">${s.away}${s.unit}</div>
+      </div>`;}).join('');
+
+    // Posiciones
+    function formBadges(form) {
+      return form.map(r=>`<span class="fb fb-${r.toLowerCase()}">${r}</span>`).join('');
+    }
+    const sorted = [...match.standings].sort((a,b)=>(b.w*3+b.d)-(a.w*3+a.d));
+    document.getElementById('posTable').innerHTML = `<table>
+      <thead><tr><th>Pos</th><th>Equipo</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GA</th><th>Forma</th><th>Pts</th></tr></thead>
+      <tbody>${sorted.map((t,i)=>{
+        const pts=t.w*3+t.d, rowClass=t.isHome?'highlight-home':t.isAway?'highlight-away':'';
+        const numClass=i<3?'top3':'';
+        const crestHtml=t.crest?`<img src="${t.crest}" onerror="this.style.display='none'" style="width:22px;height:22px;object-fit:contain"/>`:'<span style="width:22px;display:inline-block"></span>';
+        return `<tr class="${rowClass}">
+          <td><span class="pos-num-cell ${numClass}">${i+1}</span></td>
+          <td><div class="td-team-name">${crestHtml} ${t.name}</div></td>
+          <td>${t.p}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td><td>${t.gf}</td><td>${t.ga}</td>
+          <td><div class="form-badges">${formBadges(t.form)}</div></td>
+          <td><span class="pts-cell">${pts}</span></td>
+        </tr>`;}).join('')}
+      </tbody></table>`;
+
+    // Tabs
+    function showTab(id, el) {
+      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      document.querySelectorAll('.match-tab').forEach(t=>t.classList.remove('active'));
+      document.getElementById('tab-'+id).classList.add('active');
+      el.classList.add('active');
+    }
+
+    // Minuto en vivo
+    let minute = match.minute;
+    setInterval(() => {
+      if (minute < 90) { minute++; document.getElementById('heroMinute').textContent = minute+"'"; }
+    }, 60000);
+  </script>
+</body>
+</html>

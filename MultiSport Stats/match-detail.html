@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MultiSport Stats — Partido</title>
+  <link rel="stylesheet" href="dasboard.css">
+  <style>
+    * { box-sizing: border-box; }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      padding: 10px 0 14px;
+      font-size: 11px; font-weight: 600; color: #8a9ab0;
+      flex-wrap: wrap;
+    }
+    .breadcrumb a { color: #8a9ab0; text-decoration: none; }
+    .breadcrumb a:hover { color: #22c55e; }
+    .breadcrumb span { color: #1a2535; font-weight: 700; }
+    .breadcrumb .sep { color: #c8d0da; }
+
+    /* ── HERO ── */
+    .match-hero {
+      background: #0f1923;
+      border-radius: 10px; overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .hero-league {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 11px; font-weight: 700; color: #8a9ab0;
+    }
+    .hero-league img { width: 18px; height: 18px; object-fit: contain; }
+    .hero-league .lname { color: white; }
+
+    .hero-body {
+      display: flex; align-items: center;
+      padding: 24px 30px; gap: 20px;
+    }
+    .hero-team {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 10px; flex: 1; min-width: 0;
+    }
+    .hero-team img {
+      width: 72px; height: 72px; object-fit: contain;
+    }
+    .hero-team-name {
+      font-size: 14px; font-weight: 700; color: white;
+      text-align: center;
+    }
+
+    .hero-center { text-align: center; flex-shrink: 0; }
+    .hero-score {
+      font-size: 52px; font-weight: 900; color: #e53935;
+      letter-spacing: 4px; line-height: 1;
+    }
+    .hero-score.finished { color: white; }
+    .hero-status {
+      font-size: 11px; font-weight: 800; color: #e53935;
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-top: 6px;
+    }
+    .hero-time { font-size: 13px; font-weight: 700; color: #8a9ab0; margin-top: 2px; }
+    .hero-date { font-size: 11px; color: #8a9ab0; margin-top: 4px; }
+
+    .hero-blink {
+      display: inline-block; width: 7px; height: 7px;
+      border-radius: 50%; background: #e53935;
+      animation: blink 1s infinite; margin-right: 4px; vertical-align: middle;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
+
+    /* ── TABS ── */
+    .detail-tabs {
+      display: flex; border-bottom: 2px solid #e2e8f0;
+      background: white; border-radius: 8px 8px 0 0;
+      overflow: hidden; margin-bottom: 0;
+    }
+    .detail-tab {
+      padding: 12px 20px; font-size: 12px; font-weight: 700;
+      color: #8a9ab0; cursor: pointer; transition: all .15s;
+      border-bottom: 2px solid transparent; margin-bottom: -2px;
+      white-space: nowrap;
+    }
+    .detail-tab:hover { color: #1a2535; }
+    .detail-tab.active { color: #e53935; border-bottom-color: #e53935; }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn .2s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ── PANEL BASE ── */
+    .detail-panel {
+      background: white; border-radius: 0 0 8px 8px;
+      border: 1px solid #e2e8f0; border-top: none;
+      padding: 0;
+    }
+
+    /* ── EVENTOS ── */
+    .events-half {
+      padding: 0;
+    }
+    .events-half-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 16px;
+      background: #f8faf9; border-bottom: 1px solid #e2e8f0;
+      font-size: 10px; font-weight: 800; color: #8a9ab0;
+      text-transform: uppercase; letter-spacing: 0.8px;
+    }
+    .event-row {
+      display: flex; align-items: center;
+      padding: 8px 16px; border-bottom: 1px solid #f4f6f8;
+      min-height: 38px;
+    }
+    .event-row:last-child { border-bottom: none; }
+    .event-min {
+      width: 36px; font-size: 12px; font-weight: 800;
+      color: #1a2535; flex-shrink: 0;
+    }
+    .event-icon { width: 24px; text-align: center; flex-shrink: 0; font-size: 14px; }
+    .event-detail { flex: 1; font-size: 12px; color: #1a2535; }
+    .event-detail .player { font-weight: 700; }
+    .event-detail .assist { color: #8a9ab0; font-size: 11px; }
+    .event-team-logo { width: 16px; height: 16px; object-fit: contain; margin-right: 6px; }
+
+    /* home = left, away = right */
+    .event-row.away {
+      flex-direction: row-reverse;
+      text-align: right;
+    }
+    .event-row.away .event-min { text-align: right; }
+    .event-row.away .event-icon { margin: 0 0 0 6px; }
+
+    /* ── ESTADÍSTICAS ── */
+    .stats-section { padding: 16px; }
+    .stat-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 12px;
+    }
+    .stat-val { width: 36px; font-size: 13px; font-weight: 800; color: #1a2535; text-align: center; }
+    .stat-val.home { text-align: right; }
+    .stat-val.away { text-align: left; }
+    .stat-name { flex: 1; text-align: center; font-size: 11px; font-weight: 600; color: #8a9ab0; }
+    .stat-bar-wrap { flex: 1; display: flex; align-items: center; height: 6px; border-radius: 3px; background: #f0f2f5; overflow: hidden; }
+    .stat-bar-home { height: 100%; background: #0f1923; border-radius: 3px 0 0 3px; transition: width .5s; }
+    .stat-bar-away { height: 100%; background: #e53935; border-radius: 0 3px 3px 0; transition: width .5s; }
+
+    /* ── ALINEACIONES ── */
+    .lineup-section { padding: 0; }
+    .lineup-header {
+      display: grid; grid-template-columns: 1fr 1fr;
+    }
+    .lineup-team-header {
+      padding: 12px 16px; font-size: 12px; font-weight: 800;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .lineup-team-header img { width: 20px; height: 20px; object-fit: contain; }
+    .lineup-team-header.home { background: #0f1923; color: white; border-radius: 0; }
+    .lineup-team-header.away { background: #e53935; color: white; }
+
+    .formation-label {
+      font-size: 10px; opacity: 0.7; margin-left: auto;
+    }
+
+    .field-wrap {
+      position: relative; background: #2d5a27;
+      margin: 0; min-height: 320px;
+      display: flex; align-items: stretch;
+    }
+    .field-home, .field-away {
+      flex: 1; position: relative; padding: 16px 8px;
+    }
+    .field-divider {
+      width: 1px; background: rgba(255,255,255,0.2);
+    }
+    .field-row {
+      display: flex; justify-content: center; gap: 8px;
+      margin-bottom: 12px;
+    }
+    .player-dot {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      cursor: default;
+    }
+    .player-dot .dot {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800; color: white;
+    }
+    .field-home .dot { background: #0f1923; border: 2px solid #22c55e; }
+    .field-away .dot { background: #e53935; border: 2px solid #ff8a80; }
+    .player-dot .pname {
+      font-size: 9px; font-weight: 700; color: white;
+      text-align: center; max-width: 50px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+
+    /* Suplentes */
+    .subs-section { padding: 12px 16px; border-top: 1px solid #e2e8f0; }
+    .subs-title { font-size: 10px; font-weight: 800; color: #8a9ab0; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+    .subs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .sub-player {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 12px; color: #1a2535; padding: 4px 0;
+    }
+    .sub-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #f0f2f5; display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 800; color: #8a9ab0; flex-shrink: 0;
+    }
+
+    /* ── LOADING / ERROR ── */
+    .fs-loading {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 60px 20px; gap: 14px;
+      background: white; border-radius: 8px;
+    }
+    .fs-spinner {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 3px solid #e2e8f0; border-top-color: #e53935;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .no-data { padding: 32px; text-align: center; color: #8a9ab0; font-size: 13px; }
+  </style>
+</head>
+<body class="app-body">
+
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="index.html">
+      <div class="sidebar-logo-icon">🏆</div>
+      <div class="sidebar-logo-text">Multi<span>Sport</span><br>Stats</div>
+    </a>
+    <nav class="sidebar-nav">
+      <a class="nav-item" href="index.html"><span class="nav-icon">🏠</span> Dashboard</a>
+      <a class="nav-item active" href="live.html"><span class="nav-icon">📊</span> Live Matches</a>
+      <a class="nav-item" href="standings.html"><span class="nav-icon">🏅</span> Standings</a>
+      <a class="nav-item" href="profile.html"><span class="nav-icon">👤</span> Mi Perfil</a>
+      <a class="nav-item" href="about.html"><span class="nav-icon">ℹ️</span> About Us</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a class="logout-btn" href="login.html"><span>↩</span> Logout</a>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb" id="breadcrumb">
+      <a href="live.html">⚽ Fútbol</a>
+      <span class="sep">›</span>
+      <span id="bc-league">Cargando...</span>
+    </div>
+
+    <!-- LOADING -->
+    <div id="loadingState" class="fs-loading">
+      <div class="fs-spinner"></div>
+      <div style="font-size:13px;color:#8a9ab0;font-weight:600">Cargando partido...</div>
+    </div>
+
+    <!-- CONTENIDO (oculto hasta cargar) -->
+    <div id="matchContent" style="display:none">
+
+      <!-- HERO -->
+      <div class="match-hero">
+        <div class="hero-league">
+          <img id="hLeagueLogo" src="" alt="" onerror="this.style.display='none'"/>
+          <span id="hLeagueName" class="lname"></span>
+          <span id="hLeagueRound" style="margin-left:4px"></span>
+        </div>
+        <div class="hero-body">
+          <div class="hero-team">
+            <img id="hHomeLogo" src="" alt="" onerror="this.style.display='none'"/>
+            <span class="hero-team-name" id="hHomeName"></span>
+          </div>
+          <div class="hero-center">
+            <div class="hero-score" id="hScore">0 - 0</div>
+            <div class="hero-status" id="hStatus"></div>
+            <div class="hero-time" id="hTime"></div>
+            <div class="hero-date" id="hDate"></div>
+          </div>
+          <div class="hero-team">
+            <img id="hAwayLogo" src="" alt="" onerror="this.style.display='none'"/>
+            <span class="hero-team-name" id="hAwayName"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="detail-tabs">
+        <div class="detail-tab active" onclick="showTab('resumen',this)">Partido</div>
+        <div class="detail-tab" onclick="showTab('stats',this)">Estadísticas</div>
+        <div class="detail-tab" onclick="showTab('lineup',this)">Alineaciones</div>
+      </div>
+
+      <div class="detail-panel">
+
+        <!-- TAB RESUMEN -->
+        <div class="tab-content active" id="tab-resumen">
+          <div id="eventsContainer"><div class="no-data">Sin eventos registrados aún</div></div>
+        </div>
+
+        <!-- TAB ESTADÍSTICAS -->
+        <div class="tab-content" id="tab-stats">
+          <div class="stats-section" id="statsContainer">
+            <div class="no-data">Sin estadísticas disponibles aún</div>
+          </div>
+        </div>
+
+        <!-- TAB ALINEACIONES -->
+        <div class="tab-content" id="tab-lineup">
+          <div id="lineupContainer"><div class="no-data">Alineaciones no disponibles</div></div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const API_KEY = 'de9172e8894f793288ab4b3778e6a695';
+    const PROXY   = 'https://corsproxy.io/?';
+
+    // Leer fixture ID de la URL
+    const params    = new URLSearchParams(window.location.search);
+    const fixtureId = params.get('id');
+
+    if (!fixtureId) {
+      window.location.href = 'live.html';
+    }
+
+    async function apiFetch(endpoint) {
+      const url = PROXY + encodeURIComponent('https://v3.football.api-sports.io/' + endpoint);
+      const res = await fetch(url, { headers: { 'x-apisports-key': API_KEY } });
+      return await res.json();
+    }
+
+    // ── TABS ──
+    function showTab(id, el) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-' + id).classList.add('active');
+      el.classList.add('active');
+    }
+
+    // ── RENDER HERO ──
+    function renderHero(f) {
+      const isLive = ['1H','2H','HT','ET','P'].includes(f.fixture.status.short);
+      const isHT   = f.fixture.status.short === 'HT';
+      const isDone = ['FT','AET','PEN'].includes(f.fixture.status.short);
+
+      // Breadcrumb
+      document.getElementById('bc-league').textContent =
+        `${f.league.country} › ${f.league.name}${f.league.round ? ' › ' + f.league.round : ''}`;
+
+      // League
+      document.getElementById('hLeagueLogo').src  = f.league.logo;
+      document.getElementById('hLeagueName').textContent = f.league.name;
+      document.getElementById('hLeagueRound').textContent = f.league.round || '';
+
+      // Teams
+      document.getElementById('hHomeLogo').src  = f.teams.home.logo;
+      document.getElementById('hHomeName').textContent = f.teams.home.name;
+      document.getElementById('hAwayLogo').src  = f.teams.away.logo;
+      document.getElementById('hAwayName').textContent = f.teams.away.name;
+
+      // Score
+      const s1 = f.goals.home ?? 0;
+      const s2 = f.goals.away ?? 0;
+      const scoreEl = document.getElementById('hScore');
+      scoreEl.textContent = `${s1} - ${s2}`;
+      if (isDone) scoreEl.classList.add('finished');
+
+      // Status
+      const statusEl = document.getElementById('hStatus');
+      if (isLive && !isHT) {
+        statusEl.innerHTML = `<span class="hero-blink"></span>${f.fixture.status.elapsed}' · ${f.fixture.status.long}`;
+      } else if (isHT) {
+        statusEl.style.color = '#f59e0b';
+        statusEl.textContent = 'Descanso · HT';
+      } else if (isDone) {
+        statusEl.style.color = '#8a9ab0';
+        statusEl.textContent = 'Partido finalizado';
+      } else {
+        statusEl.style.color = '#8a9ab0';
+        statusEl.textContent = f.fixture.status.long;
+      }
+
+      // Date/Time
+      const d = new Date(f.fixture.date);
+      document.getElementById('hDate').textContent =
+        d.toLocaleDateString('es-CO', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) +
+        ' · ' + d.toLocaleTimeString('es-CO', { hour:'2-digit', minute:'2-digit' });
+
+      // Title
+      document.title = `${f.teams.home.name} ${s1}-${s2} ${f.teams.away.name}`;
+    }
+
+    // ── RENDER EVENTOS ──
+    function renderEvents(events, homeId) {
+      if (!events || events.length === 0) {
+        document.getElementById('eventsContainer').innerHTML = '<div class="no-data">Sin eventos registrados</div>';
+        return;
+      }
+
+      const iconMap = {
+        'Goal':       '⚽',
+        'Own Goal':   '⚽',
+        'Penalty':    '⚽',
+        'Card':       null, // se maneja aparte
+        'subst':      '🔄',
+        'Var':        '📺',
+        'Missed Penalty': '❌',
+      };
+
+      // Separar por tiempo
+      const firstHalf  = events.filter(e => (e.time.elapsed || 0) <= 45 && !e.time.extra);
+      const secondHalf = events.filter(e => (e.time.elapsed || 0) > 45 || e.time.extra);
+
+      function renderHalf(evs, label, score) {
+        if (!evs.length) return '';
+        return `
+          <div class="events-half">
+            <div class="events-half-header">
+              <span>${label}</span>
+              <span>${score}</span>
+            </div>
+            ${evs.map(e => {
+              const isHome = e.team.id === homeId;
+              const min = e.time.elapsed + (e.time.extra ? '+' + e.time.extra : '') + "'";
+
+              let icon = '';
+              let detail = '';
+
+              if (e.type === 'Goal') {
+                if (e.detail === 'Own Goal') { icon = '⚽'; detail = `<span style="color:#e53935">(Autogol)</span> `; }
+                else if (e.detail === 'Penalty') { icon = '⚽'; detail = `<span style="color:#f59e0b">(Penalti)</span> `; }
+                else { icon = '⚽'; }
+                detail += `<span class="player">${e.player.name}</span>`;
+                if (e.assist?.name) detail += ` <span class="assist">(${e.assist.name})</span>`;
+              } else if (e.type === 'Card') {
+                icon = e.detail === 'Yellow Card' ? '🟨' : e.detail === 'Red Card' ? '🟥' : '🟨🟥';
+                detail = `<span class="player">${e.player.name}</span>`;
+              } else if (e.type === 'subst') {
+                icon = '🔄';
+                detail = `<span class="player">${e.player.name}</span>`;
+                if (e.assist?.name) detail += ` <span class="assist">↑ ${e.assist.name}</span>`;
+              } else if (e.type === 'Var') {
+                icon = '📺';
+                detail = `<span class="player">${e.player.name}</span> <span class="assist">(${e.detail})</span>`;
+              } else {
+                icon = '🎯';
+                detail = `<span class="player">${e.player?.name || ''}</span>`;
+              }
+
+              return `
+                <div class="event-row ${isHome ? 'home' : 'away'}">
+                  <div class="event-min">${min}</div>
+                  <div class="event-icon">${icon}</div>
+                  <div class="event-detail">${detail}</div>
+                </div>`;
+            }).join('')}
+          </div>`;
+      }
+
+      // Calcular parciales aproximados
+      const ht1 = events.filter(e => e.type === 'Goal' && (e.time.elapsed||0) <= 45 && !e.time.extra);
+      const htHome = ht1.filter(e => e.team.id === homeId).length;
+      const htAway = ht1.filter(e => e.team.id !== homeId).length;
+
+      document.getElementById('eventsContainer').innerHTML =
+        renderHalf(firstHalf, '1er TIEMPO', `${htHome} - ${htAway}`) +
+        renderHalf(secondHalf, '2º TIEMPO', '');
+    }
+
+    // ── RENDER ESTADÍSTICAS ──
+    function renderStats(stats, homeTeam, awayTeam) {
+      const container = document.getElementById('statsContainer');
+      if (!stats || stats.length < 2) {
+        container.innerHTML = '<div class="no-data">Sin estadísticas disponibles</div>';
+        return;
+      }
+
+      const homeStats = stats[0]?.statistics || [];
+      const awayStats = stats[1]?.statistics || [];
+
+      const relevantStats = [
+        'Ball Possession','Total Shots','Shots on Goal','Shots off Goal',
+        'Blocked Shots','Corner Kicks','Offsides','Fouls','Yellow Cards',
+        'Red Cards','Goalkeeper Saves','Total passes','Pass %'
+      ];
+
+      const rows = relevantStats.map(name => {
+        const hStat = homeStats.find(s => s.type === name);
+        const aStat = awayStats.find(s => s.type === name);
+        if (!hStat && !aStat) return '';
+
+        let hVal = hStat?.value ?? 0;
+        let aVal = aStat?.value ?? 0;
+
+        // Porcentajes
+        const isPct = String(hVal).includes('%') || String(aVal).includes('%');
+        if (isPct) {
+          hVal = parseInt(String(hVal)) || 0;
+          aVal = parseInt(String(aVal)) || 0;
+        } else {
+          hVal = parseInt(hVal) || 0;
+          aVal = parseInt(aVal) || 0;
+        }
+
+        const total = hVal + aVal || 1;
+        const hPct  = Math.round((hVal / total) * 100);
+        const aPct  = 100 - hPct;
+
+        const labels = {
+          'Ball Possession': 'Posesión',
+          'Total Shots': 'Tiros totales',
+          'Shots on Goal': 'Tiros a puerta',
+          'Shots off Goal': 'Tiros fuera',
+          'Blocked Shots': 'Tiros bloqueados',
+          'Corner Kicks': 'Córners',
+          'Offsides': 'Fuera de juego',
+          'Fouls': 'Faltas',
+          'Yellow Cards': 'Amarillas',
+          'Red Cards': 'Rojas',
+          'Goalkeeper Saves': 'Paradas',
+          'Total passes': 'Pases totales',
+          'Pass %': 'Precisión pases',
+        };
+
+        const display = isPct ? `${hVal}%` : hVal;
+        const displayA = isPct ? `${aVal}%` : aVal;
+
+        return `
+          <div class="stat-row">
+            <span class="stat-val home">${display}</span>
+            <div class="stat-bar-wrap">
+              <div class="stat-bar-home" style="width:${hPct}%"></div>
+              <div class="stat-bar-away" style="width:${aPct}%"></div>
+            </div>
+            <span class="stat-val away">${displayA}</span>
+          </div>
+          <div style="text-align:center;font-size:10px;font-weight:600;color:#8a9ab0;margin-bottom:10px;margin-top:-8px">
+            ${labels[name] || name}
+          </div>`;
+      }).join('');
+
+      container.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:12px 16px;background:#f8faf9;border-radius:6px;">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700">
+            <img src="${stats[0]?.team?.logo}" style="width:20px;height:20px;object-fit:contain" onerror="this.style.display='none'"/>
+            ${stats[0]?.team?.name}
+          </div>
+          <div style="font-size:10px;font-weight:700;color:#8a9ab0">ESTADÍSTICAS</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700">
+            ${stats[1]?.team?.name}
+            <img src="${stats[1]?.team?.logo}" style="width:20px;height:20px;object-fit:contain" onerror="this.style.display='none'"/>
+          </div>
+        </div>
+        ${rows || '<div class="no-data">Sin datos</div>'}`;
+    }
+
+    // ── RENDER ALINEACIONES ──
+    function renderLineups(lineups) {
+      const container = document.getElementById('lineupContainer');
+      if (!lineups || lineups.length < 2) {
+        container.innerHTML = '<div class="no-data">Alineaciones no disponibles aún</div>';
+        return;
+      }
+
+      const home = lineups[0];
+      const away = lineups[1];
+
+      function buildFormation(players, side) {
+        if (!players?.length) return '';
+        const rows = {};
+        players.forEach(p => {
+          const row = p.player.grid ? p.player.grid.split(':')[0] : '1';
+          if (!rows[row]) rows[row] = [];
+          rows[row].push(p);
+        });
+
+        return Object.keys(rows).sort((a,b) => side === 'home' ? b-a : a-b).map(row => `
+          <div class="field-row">
+            ${rows[row].map(p => `
+              <div class="player-dot">
+                <div class="dot">${p.player.number || '?'}</div>
+                <span class="pname">${p.player.name?.split(' ').pop() || p.player.name}</span>
+              </div>`).join('')}
+          </div>`).join('');
+      }
+
+      function buildSubs(subs) {
+        if (!subs?.length) return '';
+        return subs.map(p => `
+          <div class="sub-player">
+            <div class="sub-num">${p.player.number || '?'}</div>
+            <span>${p.player.name}</span>
+          </div>`).join('');
+      }
+
+      container.innerHTML = `
+        <div class="lineup-section">
+          <div class="lineup-header">
+            <div class="lineup-team-header home">
+              <img src="${home.team.logo}" onerror="this.style.display='none'" alt=""/>
+              ${home.team.name}
+              <span class="formation-label">${home.formation || ''}</span>
+            </div>
+            <div class="lineup-team-header away">
+              <img src="${away.team.logo}" onerror="this.style.display='none'" alt=""/>
+              ${away.team.name}
+              <span class="formation-label">${away.formation || ''}</span>
+            </div>
+          </div>
+          <div class="field-wrap">
+            <div class="field-home">${buildFormation(home.startXI, 'home')}</div>
+            <div class="field-divider"></div>
+            <div class="field-away">${buildFormation(away.startXI, 'away')}</div>
+          </div>
+          <div class="subs-section">
+            <div class="subs-title">Suplentes</div>
+            <div class="subs-grid">
+              <div>${buildSubs(home.substitutes)}</div>
+              <div>${buildSubs(away.substitutes)}</div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // ── INIT ──
+    async function loadMatch() {
+      try {
+        // Fetch en paralelo
+        const [fixtureRes, eventsRes, statsRes, lineupRes] = await Promise.allSettled([
+          apiFetch(`fixtures?id=${fixtureId}`),
+          apiFetch(`fixtures/events?fixture=${fixtureId}`),
+          apiFetch(`fixtures/statistics?fixture=${fixtureId}`),
+          apiFetch(`fixtures/lineups?fixture=${fixtureId}`)
+        ]);
+
+        const fixture = fixtureRes.status === 'fulfilled' ? fixtureRes.value?.response?.[0] : null;
+        if (!fixture) {
+          document.getElementById('loadingState').innerHTML =
+            '<div class="no-data" style="padding:60px">No se encontró el partido. <a href="live.html" style="color:#22c55e">Volver</a></div>';
+          return;
+        }
+
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('matchContent').style.display = 'block';
+
+        renderHero(fixture);
+
+        const events  = eventsRes.status  === 'fulfilled' ? eventsRes.value?.response  : [];
+        const stats   = statsRes.status   === 'fulfilled' ? statsRes.value?.response   : [];
+        const lineups = lineupRes.status  === 'fulfilled' ? lineupRes.value?.response  : [];
+
+        renderEvents(events, fixture.teams.home.id);
+        renderStats(stats, fixture.teams.home, fixture.teams.away);
+        renderLineups(lineups);
+
+        // Refrescar si está en vivo
+        const isLive = ['1H','2H','HT','ET','P'].includes(fixture.fixture.status.short);
+        if (isLive) {
+          setInterval(async () => {
+            const r = await apiFetch(`fixtures?id=${fixtureId}`);
+            const f = r?.response?.[0];
+            if (f) renderHero(f);
+            const ev = await apiFetch(`fixtures/events?fixture=${fixtureId}`);
+            if (ev?.response) renderEvents(ev.response, f?.teams?.home?.id);
+          }, 60000);
+        }
+
+      } catch(e) {
+        console.error(e);
+        document.getElementById('loadingState').innerHTML =
+          '<div class="no-data" style="padding:60px">Error al cargar el partido. <a href="live.html" style="color:#22c55e">Volver</a></div>';
+      }
+    }
+
+    loadMatch();
+  </script>
+</body>
+</html>
