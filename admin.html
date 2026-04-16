@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin — MultiSport Stats</title>
+  <link rel="stylesheet" href="css/dashboard.css"/>
+  <style>
+    /* ── LOGIN OVERLAY ── */
+    #loginOverlay {
+      position: fixed; inset: 0;
+      background: #0f1923;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999;
+    }
+    .login-box {
+      background: #1a2535;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 40px 36px;
+      width: 360px;
+      text-align: center;
+    }
+    .login-icon { font-size: 40px; margin-bottom: 12px; }
+    .login-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 26px; font-weight: 800; color: white;
+      margin-bottom: 4px;
+    }
+    .login-sub { font-size: 13px; color: #8a9ab0; margin-bottom: 28px; }
+    .login-input {
+      width: 100%; padding: 12px 16px;
+      background: #0f1923;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: white; font-size: 15px;
+      font-family: 'Barlow', sans-serif;
+      margin-bottom: 14px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .login-input:focus { border-color: #22c55e; }
+    .login-btn {
+      width: 100%; padding: 12px;
+      background: #2e7d32; color: white;
+      border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 700;
+      font-family: 'Barlow', sans-serif;
+      cursor: pointer; transition: background .2s;
+    }
+    .login-btn:hover { background: #22c55e; }
+    .login-error {
+      color: #ef4444; font-size: 12px;
+      margin-top: 10px; display: none;
+    }
+
+    /* ── ADMIN PANEL ── */
+    #adminPanel { display: none; }
+
+    .admin-header {
+      background: linear-gradient(90deg, #0f1923, #1a2535);
+      border-radius: 14px;
+      padding: 20px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .admin-header-left { display: flex; align-items: center; gap: 14px; }
+    .admin-badge {
+      background: #dc2626;
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .admin-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 800; color: white;
+    }
+    .logout-admin {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #ef4444;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px; font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: 'Barlow', sans-serif;
+    }
+    .logout-admin:hover { background: rgba(239,68,68,0.2); }
+
+    /* ── TABS ADMIN ── */
+    .admin-tabs {
+      display: flex; gap: 8px; margin-bottom: 24px;
+    }
+    .admin-tab {
+      padding: 9px 20px;
+      border-radius: 10px;
+      border: 1.5px solid #e2e8f0;
+      background: white;
+      font-size: 13px; font-weight: 700;
+      color: #8a9ab0;
+      cursor: pointer; transition: all .2s;
+    }
+    .admin-tab:hover { color: #1a2535; }
+    .admin-tab.active { background: #0f1923; border-color: #0f1923; color: white; }
+
+    .admin-panel-tab { display: none; }
+    .admin-panel-tab.active { display: block; animation: fadeIn .2s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ── CARDS ADMIN ── */
+    .admin-card {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
+    }
+    .admin-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px; font-weight: 800;
+      color: #0f1923;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 18px;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    /* ── FORM STYLES ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .form-grid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+    .form-grid.cols1 { grid-template-columns: 1fr; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-label { font-size: 11px; font-weight: 700; color: #8a9ab0; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-input, .form-select {
+      padding: 10px 14px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Barlow', sans-serif;
+      color: #1a2535;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .form-input:focus, .form-select:focus { border-color: #22c55e; }
+    .form-select { background: white; cursor: pointer; }
+
+    .btn-add {
+      background: #2e7d32; color: white;
+      border: none; border-radius: 8px;
+      padding: 11px 22px;
+      font-size: 14px; font-weight: 700;
+      font-family: 'Barlow', sans-serif;
+      cursor: pointer; transition: background .2s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-add:hover { background: #22c55e; }
+
+    .btn-danger {
+      background: rgba(239,68,68,0.08);
+      color: #ef4444;
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-danger:hover { background: rgba(239,68,68,0.18); }
+
+    .btn-edit {
+      background: rgba(34,197,94,0.08);
+      color: #22c55e;
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-edit:hover { background: rgba(34,197,94,0.18); }
+
+    /* ── ITEMS LIST ── */
+    .items-list { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+    .item-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px;
+      background: #f8faf9;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      animation: fadeIn .2s ease;
+    }
+    .item-info { display: flex; align-items: center; gap: 10px; }
+    .item-icon { font-size: 20px; }
+    .item-name { font-weight: 700; font-size: 14px; color: #1a2535; }
+    .item-meta { font-size: 12px; color: #8a9ab0; margin-top: 2px; }
+    .item-actions { display: flex; gap: 6px; }
+
+    /* ── LIVE STATUS ── */
+    .status-dot-live {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: blink 1s infinite;
+      display: inline-block;
+      margin-right: 4px;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+    .status-dot-upcoming {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #f59e0b;
+      display: inline-block;
+      margin-right: 4px;
+    }
+
+    /* ── STATS BOX ── */
+    .stats-boxes {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .stat-box {
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      border: 1px solid #e2e8f0;
+      text-align: center;
+    }
+    .stat-box-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 36px; font-weight: 800; color: #0f1923;
+    }
+    .stat-box-label { font-size: 11px; font-weight: 600; color: #8a9ab0; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+    /* ── SUCCESS TOAST ── */
+    .success-toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #0f1923; color: white;
+      padding: 12px 20px; border-radius: 12px;
+      font-size: 13px; font-weight: 600;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+      transform: translateY(80px); opacity: 0;
+      transition: all .3s ease; z-index: 9999;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .success-toast.show { transform: translateY(0); opacity: 1; }
+
+    .divider { height: 1px; background: #f0f2f5; margin: 18px 0; }
+  </style>
+</head>
+<body class="app-body" style="background:#f0f2f5;">
+
+  <!-- ── TOAST ── -->
+  <div class="success-toast" id="toast">
+    <span>✅</span><span id="toastMsg">Guardado correctamente</span>
+  </div>
+
+  <!-- ── LOGIN OVERLAY ── -->
+  <div id="loginOverlay">
+    <div class="login-box">
+      <div class="login-icon">🔐</div>
+      <div class="login-title">Panel Administrador</div>
+      <div class="login-sub">MultiSport Stats — Acceso privado</div>
+      <input class="login-input" type="text" id="loginUser" placeholder="Usuario" autocomplete="off"/>
+      <input class="login-input" type="password" id="loginPass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()"/>
+      <button class="login-btn" onclick="doLogin()">Entrar</button>
+      <div class="login-error" id="loginError">Usuario o contraseña incorrectos</div>
+    </div>
+  </div>
+
+  <!-- ── ADMIN PANEL ── -->
+  <div id="adminPanel" style="padding:32px 40px;max-width:1100px;margin:0 auto;">
+
+    <!-- Header -->
+    <div class="admin-header">
+      <div class="admin-header-left">
+        <span class="admin-badge">🔒 ADMIN</span>
+        <span class="admin-title">Panel de Administrador</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <a href="dashboard.html" style="color:#8a9ab0;font-size:13px;font-weight:600;text-decoration:none;">← Ver sitio</a>
+        <button class="logout-admin" onclick="doLogout()">Cerrar sesión</button>
+      </div>
+    </div>
+
+    <!-- Stats rápidas -->
+    <div class="stats-boxes">
+      <div class="stat-box">
+        <div class="stat-box-num" id="countMatches">0</div>
+        <div class="stat-box-label">Partidos</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-num" id="countLive">0</div>
+        <div class="stat-box-label">En vivo</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-num" id="countUpcoming">0</div>
+        <div class="stat-box-label">Próximos</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-num" id="countNews">0</div>
+        <div class="stat-box-label">Noticias</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="admin-tabs">
+      <div class="admin-tab active" onclick="switchAdminTab('partidos',this)">⚽ Partidos</div>
+      <div class="admin-tab" onclick="switchAdminTab('noticias',this)">📰 Noticias</div>
+      <div class="admin-tab" onclick="switchAdminTab('equipos',this)">🏟️ Equipos</div>
+      <div class="admin-tab" onclick="switchAdminTab('config',this)">⚙️ Config</div>
+    </div>
+
+    <!-- ══════════════════════════════
+         TAB: PARTIDOS
+    ══════════════════════════════ -->
+    <div class="admin-panel-tab active" id="tab-partidos">
+
+      <!-- Agregar partido -->
+      <div class="admin-card">
+        <div class="admin-card-title">➕ Agregar partido</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Deporte</label>
+            <select class="form-select" id="p-sport">
+              <option value="futbol">⚽ Fútbol</option>
+              <option value="baloncesto">🏀 Baloncesto</option>
+              <option value="tenis">🎾 Tenis</option>
+              <option value="hockey">🏒 Hockey</option>
+              <option value="f1">🏎️ F1</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Liga / Competición</label>
+            <input class="form-input" id="p-league" placeholder="Ej: La Liga, NBA..."/>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Equipo / Jugador 1</label>
+            <input class="form-input" id="p-team1" placeholder="Ej: Barcelona"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Equipo / Jugador 2</label>
+            <input class="form-input" id="p-team2" placeholder="Ej: Real Madrid"/>
+          </div>
+        </div>
+        <div class="form-grid cols3">
+          <div class="form-group">
+            <label class="form-label">Estado</label>
+            <select class="form-select" id="p-status">
+              <option value="live">🔴 En vivo</option>
+              <option value="upcoming">🟡 Próximo</option>
+              <option value="finished">⚫ Finalizado</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Marcador / Minuto (local)</label>
+            <input class="form-input" id="p-score1" placeholder="Ej: 2" type="number" min="0"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Marcador / Minuto (visita)</label>
+            <input class="form-input" id="p-score2" placeholder="Ej: 1" type="number" min="0"/>
+          </div>
+        </div>
+        <div class="form-grid" id="timeFieldWrap">
+          <div class="form-group">
+            <label class="form-label">Tiempo / Minuto actual</label>
+            <input class="form-input" id="p-time" placeholder="Ej: 78' o Q4 3:45"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fecha y hora (si es próximo)</label>
+            <input class="form-input" id="p-date" type="datetime-local"/>
+          </div>
+        </div>
+        <button class="btn-add" onclick="addMatch()">➕ Agregar partido</button>
+      </div>
+
+      <!-- Lista de partidos -->
+      <div class="admin-card">
+        <div class="admin-card-title">📋 Partidos actuales</div>
+        <div class="items-list" id="matchList"></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         TAB: NOTICIAS
+    ══════════════════════════════ -->
+    <div class="admin-panel-tab" id="tab-noticias">
+      <div class="admin-card">
+        <div class="admin-card-title">➕ Agregar noticia</div>
+        <div class="form-grid cols1">
+          <div class="form-group">
+            <label class="form-label">Título</label>
+            <input class="form-input" id="n-title" placeholder="Ej: Haaland rompe récord de goles..."/>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Categoría</label>
+            <select class="form-select" id="n-cat">
+              <option>⚽ Fútbol</option>
+              <option>🏀 Baloncesto</option>
+              <option>🎾 Tenis</option>
+              <option>🏒 Hockey</option>
+              <option>🏎️ F1</option>
+              <option>📰 General</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Importancia</label>
+            <select class="form-select" id="n-priority">
+              <option value="high">🔴 Alta — Breaking news</option>
+              <option value="medium">🟡 Media</option>
+              <option value="low">🟢 Baja</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid cols1">
+          <div class="form-group">
+            <label class="form-label">Resumen (opcional)</label>
+            <input class="form-input" id="n-summary" placeholder="Breve descripción de la noticia..."/>
+          </div>
+        </div>
+        <button class="btn-add" onclick="addNews()">➕ Publicar noticia</button>
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-card-title">📰 Noticias publicadas</div>
+        <div class="items-list" id="newsList"></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         TAB: EQUIPOS
+    ══════════════════════════════ -->
+    <div class="admin-panel-tab" id="tab-equipos">
+      <div class="admin-card">
+        <div class="admin-card-title">➕ Agregar equipo</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Nombre del equipo</label>
+            <input class="form-input" id="t-name" placeholder="Ej: Inter Miami"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Liga</label>
+            <input class="form-input" id="t-league" placeholder="Ej: MLS"/>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">URL del escudo</label>
+            <input class="form-input" id="t-crest" placeholder="https://crests.football-data.org/..."/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Color del equipo</label>
+            <input class="form-input" id="t-color" type="color" value="#22c55e" style="height:42px;padding:4px 8px;cursor:pointer;"/>
+          </div>
+        </div>
+        <div class="form-grid cols3">
+          <div class="form-group">
+            <label class="form-label">País</label>
+            <input class="form-input" id="t-country" placeholder="Ej: España"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Estadio</label>
+            <input class="form-input" id="t-stadium" placeholder="Ej: Camp Nou"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fundado en</label>
+            <input class="form-input" id="t-founded" placeholder="Ej: 1899" type="number"/>
+          </div>
+        </div>
+        <button class="btn-add" onclick="addTeam()">➕ Agregar equipo</button>
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-card-title">🏟️ Equipos registrados</div>
+        <div class="items-list" id="teamList"></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         TAB: CONFIG
+    ══════════════════════════════ -->
+    <div class="admin-panel-tab" id="tab-config">
+      <div class="admin-card">
+        <div class="admin-card-title">🔐 Cambiar contraseña de acceso</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Contraseña actual</label>
+            <input class="form-input" type="password" id="cp-current" placeholder="••••••••"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nueva contraseña</label>
+            <input class="form-input" type="password" id="cp-new" placeholder="••••••••"/>
+          </div>
+        </div>
+        <div class="form-grid cols1">
+          <div class="form-group">
+            <label class="form-label">Confirmar nueva contraseña</label>
+            <input class="form-input" type="password" id="cp-confirm" placeholder="••••••••"/>
+          </div>
+        </div>
+        <button class="btn-add" onclick="changePassword()">🔐 Cambiar contraseña</button>
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-card-title">⚙️ Configuración general del sitio</div>
+        <div class="form-grid cols1">
+          <div class="form-group">
+            <label class="form-label">Nombre del sitio</label>
+            <input class="form-input" id="cfg-sitename" value="MultiSport Stats"/>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Mensaje de bienvenida (dashboard)</label>
+            <input class="form-input" id="cfg-welcome" placeholder="Ej: Bienvenido a la jornada de hoy"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Zona horaria</label>
+            <select class="form-select" id="cfg-tz">
+              <option>America/Bogota (COT -5)</option>
+              <option>America/New_York (EST -5)</option>
+              <option>Europe/Madrid (CET +1)</option>
+              <option>UTC</option>
+            </select>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="admin-card-title" style="margin-bottom:14px;">🗑️ Zona de peligro</div>
+        <button class="btn-danger" style="padding:10px 18px;font-size:13px;" onclick="clearAll()">🗑️ Borrar todos los datos guardados</button>
+      </div>
+    </div>
+
+  </div><!-- /adminPanel -->
+
+  <script>
+    // ── CREDENCIALES (puedes cambiarlas desde el panel) ──
+    const DEFAULT_USER = 'admin';
+    const DEFAULT_PASS = 'multisport2025';
+
+    // ── ESTADO ──
+    let data = JSON.parse(localStorage.getItem('adminData') || 'null') || {
+      matches: [],
+      news: [],
+      teams: [],
+      password: DEFAULT_PASS,
+      username: DEFAULT_USER
+    };
+
+    function save() {
+      localStorage.setItem('adminData', JSON.stringify(data));
+      updateStats();
+    }
+
+    function showToast(msg) {
+      document.getElementById('toastMsg').textContent = msg;
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    // ── LOGIN ──
+    function doLogin() {
+      const user = document.getElementById('loginUser').value.trim();
+      const pass = document.getElementById('loginPass').value;
+      const err  = document.getElementById('loginError');
+
+      if (user === data.username && pass === data.password) {
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        renderAll();
+      } else {
+        err.style.display = 'block';
+        document.getElementById('loginPass').value = '';
+        setTimeout(() => err.style.display = 'none', 3000);
+      }
+    }
+
+    function doLogout() {
+      document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('loginOverlay').style.display = 'flex';
+      document.getElementById('loginUser').value = '';
+      document.getElementById('loginPass').value = '';
+    }
+
+    // ── TABS ──
+    function switchAdminTab(id, el) {
+      document.querySelectorAll('.admin-panel-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-' + id).classList.add('active');
+      el.classList.add('active');
+    }
+
+    // ── STATS ──
+    function updateStats() {
+      document.getElementById('countMatches').textContent  = data.matches.length;
+      document.getElementById('countLive').textContent     = data.matches.filter(m => m.status === 'live').length;
+      document.getElementById('countUpcoming').textContent = data.matches.filter(m => m.status === 'upcoming').length;
+      document.getElementById('countNews').textContent     = data.news.length;
+    }
+
+    // ── SPORT ICONS ──
+    const sportIcons = { futbol:'⚽', baloncesto:'🏀', tenis:'🎾', hockey:'🏒', f1:'🏎️' };
+
+    // ══════════════════════════
+    // PARTIDOS
+    // ══════════════════════════
+    function addMatch() {
+      const sport  = document.getElementById('p-sport').value;
+      const league = document.getElementById('p-league').value.trim();
+      const team1  = document.getElementById('p-team1').value.trim();
+      const team2  = document.getElementById('p-team2').value.trim();
+      const status = document.getElementById('p-status').value;
+      const score1 = document.getElementById('p-score1').value;
+      const score2 = document.getElementById('p-score2').value;
+      const time   = document.getElementById('p-time').value.trim();
+      const date   = document.getElementById('p-date').value;
+
+      if (!league || !team1 || !team2) {
+        showToast('⚠️ Completa liga y equipos');
+        return;
+      }
+
+      data.matches.push({
+        id: Date.now(),
+        sport, league, team1, team2, status,
+        score1: score1 || '0',
+        score2: score2 || '0',
+        time: time || (status === 'upcoming' ? formatDate(date) : '0\''),
+        date
+      });
+
+      save();
+      renderMatches();
+      showToast('✅ Partido agregado');
+      // Limpiar
+      ['p-league','p-team1','p-team2','p-score1','p-score2','p-time','p-date'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+    }
+
+    function deleteMatch(id) {
+      data.matches = data.matches.filter(m => m.id !== id);
+      save(); renderMatches();
+      showToast('🗑️ Partido eliminado');
+    }
+
+    function formatDate(dt) {
+      if (!dt) return '';
+      const d = new Date(dt);
+      return d.toLocaleDateString('es-CO', { weekday:'short', month:'short', day:'numeric' }) + ' ' +
+             d.toLocaleTimeString('es-CO', { hour:'2-digit', minute:'2-digit' });
+    }
+
+    function renderMatches() {
+      const list = document.getElementById('matchList');
+      if (!data.matches.length) {
+        list.innerHTML = '<div style="color:#8a9ab0;font-size:13px;text-align:center;padding:20px">No hay partidos agregados aún</div>';
+        return;
+      }
+      list.innerHTML = data.matches.map(m => `
+        <div class="item-row">
+          <div class="item-info">
+            <span class="item-icon">${sportIcons[m.sport] || '🎯'}</span>
+            <div>
+              <div class="item-name">${m.team1} vs ${m.team2}</div>
+              <div class="item-meta">
+                ${m.status === 'live' ? `<span class="status-dot-live"></span>EN VIVO` : m.status === 'upcoming' ? `<span class="status-dot-upcoming"></span>Próximo` : '⚫ Finalizado'}
+                · ${m.league} · ${m.score1}–${m.score2} · ${m.time}
+              </div>
+            </div>
+          </div>
+          <div class="item-actions">
+            <button class="btn-danger" onclick="deleteMatch(${m.id})">🗑️ Eliminar</button>
+          </div>
+        </div>`).join('');
+    }
+
+    // ══════════════════════════
+    // NOTICIAS
+    // ══════════════════════════
+    function addNews() {
+      const title    = document.getElementById('n-title').value.trim();
+      const cat      = document.getElementById('n-cat').value;
+      const priority = document.getElementById('n-priority').value;
+      const summary  = document.getElementById('n-summary').value.trim();
+
+      if (!title) { showToast('⚠️ Escribe el título'); return; }
+
+      data.news.push({
+        id: Date.now(),
+        title, cat, priority, summary,
+        date: new Date().toLocaleDateString('es-CO', { day:'numeric', month:'short', year:'numeric' })
+      });
+
+      save(); renderNews(); showToast('✅ Noticia publicada');
+      ['n-title','n-summary'].forEach(id => document.getElementById(id).value = '');
+    }
+
+    function deleteNews(id) {
+      data.news = data.news.filter(n => n.id !== id);
+      save(); renderNews();
+      showToast('🗑️ Noticia eliminada');
+    }
+
+    function renderNews() {
+      const list = document.getElementById('newsList');
+      if (!data.news.length) {
+        list.innerHTML = '<div style="color:#8a9ab0;font-size:13px;text-align:center;padding:20px">No hay noticias publicadas aún</div>';
+        return;
+      }
+      const prioColors = { high:'#ef4444', medium:'#f59e0b', low:'#22c55e' };
+      list.innerHTML = data.news.map(n => `
+        <div class="item-row">
+          <div class="item-info">
+            <span class="item-icon">${n.cat.split(' ')[0]}</span>
+            <div>
+              <div class="item-name">${n.title}</div>
+              <div class="item-meta" style="color:${prioColors[n.priority]}">
+                ${n.priority === 'high' ? '🔴 Breaking' : n.priority === 'medium' ? '🟡 Media' : '🟢 Baja'}
+                · ${n.date} ${n.summary ? '· '+n.summary.slice(0,50)+'...' : ''}
+              </div>
+            </div>
+          </div>
+          <div class="item-actions">
+            <button class="btn-danger" onclick="deleteNews(${n.id})">🗑️ Eliminar</button>
+          </div>
+        </div>`).join('');
+    }
+
+    // ══════════════════════════
+    // EQUIPOS
+    // ══════════════════════════
+    function addTeam() {
+      const name    = document.getElementById('t-name').value.trim();
+      const league  = document.getElementById('t-league').value.trim();
+      const crest   = document.getElementById('t-crest').value.trim();
+      const color   = document.getElementById('t-color').value;
+      const country = document.getElementById('t-country').value.trim();
+      const stadium = document.getElementById('t-stadium').value.trim();
+      const founded = document.getElementById('t-founded').value;
+
+      if (!name || !league) { showToast('⚠️ Escribe nombre y liga'); return; }
+
+      data.teams.push({ id: Date.now(), name, league, crest, color, country, stadium, founded });
+      save(); renderTeams(); showToast('✅ Equipo agregado');
+      ['t-name','t-league','t-crest','t-country','t-stadium','t-founded'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+    }
+
+    function deleteTeam(id) {
+      data.teams = data.teams.filter(t => t.id !== id);
+      save(); renderTeams();
+      showToast('🗑️ Equipo eliminado');
+    }
+
+    function renderTeams() {
+      const list = document.getElementById('teamList');
+      if (!data.teams.length) {
+        list.innerHTML = '<div style="color:#8a9ab0;font-size:13px;text-align:center;padding:20px">No hay equipos registrados aún</div>';
+        return;
+      }
+      list.innerHTML = data.teams.map(t => `
+        <div class="item-row">
+          <div class="item-info">
+            ${t.crest ? `<img src="${t.crest}" style="width:32px;height:32px;object-fit:contain" onerror="this.style.display='none'"/>` : `<span style="width:32px;height:32px;border-radius:50%;background:${t.color};display:inline-flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0">🏟️</span>`}
+            <div>
+              <div class="item-name">${t.name}</div>
+              <div class="item-meta">${t.league}${t.country ? ' · '+t.country : ''}${t.stadium ? ' · '+t.stadium : ''}${t.founded ? ' · Fundado '+t.founded : ''}</div>
+            </div>
+          </div>
+          <div class="item-actions">
+            <button class="btn-danger" onclick="deleteTeam(${t.id})">🗑️ Eliminar</button>
+          </div>
+        </div>`).join('');
+    }
+
+    // ══════════════════════════
+    // CONFIG
+    // ══════════════════════════
+    function changePassword() {
+      const current = document.getElementById('cp-current').value;
+      const newP    = document.getElementById('cp-new').value;
+      const confirm = document.getElementById('cp-confirm').value;
+
+      if (current !== data.password) { showToast('❌ Contraseña actual incorrecta'); return; }
+      if (newP.length < 6) { showToast('⚠️ Mínimo 6 caracteres'); return; }
+      if (newP !== confirm) { showToast('⚠️ Las contraseñas no coinciden'); return; }
+
+      data.password = newP;
+      save();
+      showToast('✅ Contraseña actualizada');
+      ['cp-current','cp-new','cp-confirm'].forEach(id => document.getElementById(id).value = '');
+    }
+
+    function clearAll() {
+      if (!confirm('¿Seguro? Esto borrará todos los partidos, noticias y equipos que hayas agregado.')) return;
+      data.matches = [];
+      data.news = [];
+      data.teams = [];
+      save();
+      renderAll();
+      showToast('🗑️ Datos borrados');
+    }
+
+    // ══════════════════════════
+    // RENDER ALL
+    // ══════════════════════════
+    function renderAll() {
+      renderMatches();
+      renderNews();
+      renderTeams();
+      updateStats();
+    }
+  </script>
+</body>
+</html>
