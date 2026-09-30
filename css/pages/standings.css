@@ -1,0 +1,19 @@
+/* Tablas de posiciones */
+.standings-head {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+  gap: var(--space-3); margin-bottom: var(--space-4);
+}
+.standings-head h2 { font-size: var(--fs-xl); }
+.standings-card { overflow: hidden; }
+.data-table tr.is-fav td { background: color-mix(in srgb, var(--warning) 7%, transparent); }
+.data-table tr.is-target td { animation: row-highlight 2.4s var(--ease); }
+@keyframes row-highlight { 0%, 40% { background: var(--brand-soft); } }
+.data-table td .fav-btn { width: 28px; height: 28px; }
+
+.bracket { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); align-items: start; }
+.bracket h3 { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border); font-size: var(--fs-sm); }
+.sets { display: flex; gap: 6px; padding: 0 var(--space-4) var(--space-3); flex-wrap: wrap; }
+.sets span {
+  padding: 1px 8px; border-radius: var(--radius-sm); background: var(--surface-2);
+  font-size: var(--fs-xs); font-variant-numeric: tabular-nums; color: var(--text-muted);
+}
