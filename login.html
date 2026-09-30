@@ -1,230 +1,63 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MultiSport Stats — Login</title>
-  <link rel="stylesheet" href="css/login.css"/>
-  <!-- Google Identity Services -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <style>
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 18px 0;
-    }
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: rgba(255,255,255,0.1);
-    }
-    .divider span {
-      font-size: 12px;
-      color: #8a9ab0;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .btn-google {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 12px;
-      background: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 700;
-      color: #1a2535;
-      cursor: pointer;
-      transition: all .2s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0);
-      font-family: 'Barlow', sans-serif;
-    }
-    .btn-google:hover {
-      background: #f0f2f5;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-      transform: translateY(-1px);
-    }
-    .btn-google:active { transform: translateY(0); }
-
-    .google-icon {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-    }
-
-    /* Toast de bienvenida */
-    .welcome-toast {
-      position: fixed;
-      top: 20px; right: 20px;
-      background: linear-gradient(135deg, #166534, #22c55e);
-      color: white;
-      padding: 14px 20px;
-      border-radius: 14px;
-      font-size: 14px;
-      font-weight: 700;
-      box-shadow: 0 8px 30px rgba(34,197,94,0.4);
-      z-index: 9999;
-      transform: translateX(200%);
-      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
-      max-width: 280px;
-    }
-    .welcome-toast.show { transform: translateX(0); }
-    .welcome-toast .wt-sub { font-size: 12px; font-weight: 500; opacity: 0.85; margin-top: 3px; }
-
-    /* Loading spinner */
-    .btn-primary.loading {
-      opacity: 0.7;
-      pointer-events: none;
-    }
-    .btn-primary.loading::after {
-      content: ' ⏳';
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iniciar sesión · MultiSport Stats</title>
+  <meta name="description" content="Inicia sesión con tu cuenta demo local de MultiSport Stats.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <script src="js/core/theme-init.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/auth.css">
+  <script type="module" src="js/pages/auth-page.js"></script>
 </head>
-<body class="auth-body">
-
-  <!-- Toast de bienvenida -->
-  <div class="welcome-toast" id="welcomeToast">
-    <div id="welcomeMsg">¡Bienvenido! 👋</div>
-    <div class="wt-sub" id="welcomeSub">Redirigiendo al dashboard...</div>
-  </div>
-
-  <div class="auth-card">
-    <a class="auth-logo" href="login.html">🏆</a>
-    <h1>MultiSport Stats</h1>
-    <p class="subtitle">Inicia sesión para ver estadísticas en vivo</p>
-
-    <!-- Botón Google -->
-    <button class="btn-google" onclick="loginWithGoogle()">
-      <svg class="google-icon" viewBox="0 0 24 24">
-        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
-        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-      </svg>
-      Continuar con Google
-    </button>
-
-    <div class="divider"><span>o inicia con tu cuenta</span></div>
-
-    <div class="form-group">
-      <label>Email</label>
-      <input type="email" id="emailInput" placeholder="example@email.com"/>
+<body class="auth-body" data-auth="login">
+  <main class="auth" id="main">
+    <div class="auth__top">
+      <a class="brand" href="dashboard.html" aria-label="MultiSport Stats, ir al inicio">
+        <span class="brand__mark"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17 7.5 8.5l3.5 6 3.5-7 3.5 9.5"/></svg></span>
+        <span>Multi<span>Sport</span> Stats</span>
+      </a>
+      <button type="button" class="btn btn--icon btn--ghost" data-action="theme" aria-label="Cambiar tema"></button>
     </div>
-    <div class="form-group">
-      <label>Password</label>
-      <div class="input-wrap">
-        <input type="password" id="pwd" placeholder="••••••••••"/>
-        <button class="eye-btn" onclick="togglePwd()">👁</button>
+
+    <section class="card auth-card" aria-labelledby="authTitle">
+      <h1 id="authTitle">Iniciar sesión</h1>
+      <p>Personaliza tu nombre y avatar. Tus favoritos funcionan también sin cuenta.</p>
+
+      <div class="notice" role="note">
+        <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#alert"></use></svg>
+        <span><strong>Cuenta de demostración.</strong> Solo existe en este navegador y no hay servidor.
+          No uses una contraseña que utilices en otros sitios.</span>
       </div>
-    </div>
 
-    <button class="btn-primary" id="loginBtn" onclick="loginNormal()">Iniciar Sesión</button>
+      <form id="authForm" novalidate>
+        <div class="field">
+          <label for="email">Correo electrónico</label>
+          <input class="input" type="email" id="email" name="email" autocomplete="email" required aria-describedby="email-error">
+          <span class="field__error" id="email-error"></span>
+        </div>
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <div class="input-group">
+            <input class="input" type="password" id="password" name="password" autocomplete="current-password" required aria-describedby="password-error">
+            <button type="button" class="btn btn--icon btn--ghost" data-toggle="password" aria-pressed="false" aria-label="Mostrar contraseña">
+              <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#eye"></use></svg>
+            </button>
+          </div>
+          <span class="field__error" id="password-error"></span>
+        </div>
+        <p class="form-message" id="formMessage" role="status" aria-live="polite"></p>
+        <button type="submit" class="btn btn--primary btn--block">Entrar</button>
+      </form>
 
-    <div class="auth-footer">
-      ¿No tienes una cuenta? <a href="register.html">Regístrate</a>
-    </div>
-  </div>
-
-  <script>
-    // ── TOGGLE PASSWORD ──
-    function togglePwd() {
-      const input = document.getElementById('pwd');
-      input.type = input.type === 'password' ? 'text' : 'password';
-    }
-
-    // ── TOAST ──
-    function showWelcome(name, sub) {
-      document.getElementById('welcomeMsg').textContent = '¡Bienvenido, ' + name + '! 👋';
-      document.getElementById('welcomeSub').textContent = sub || 'Redirigiendo al dashboard...';
-      document.getElementById('welcomeToast').classList.add('show');
-    }
-
-    // ── LOGIN NORMAL ──
-    function loginNormal() {
-      const email = document.getElementById('emailInput').value.trim();
-      const pass  = document.getElementById('pwd').value;
-      const btn   = document.getElementById('loginBtn');
-
-      if (!email || !pass) {
-        alert('Por favor completa todos los campos');
-        return;
-      }
-
-      btn.classList.add('loading');
-      btn.textContent = 'Entrando...';
-
-      // Guardar sesión básica
-      const name = email.split('@')[0];
-      saveSession({ name, email, avatar: null, method: 'email' });
-
-      showWelcome(name, 'Redirigiendo al dashboard...');
-      setTimeout(() => window.location.href = 'dashboard.html', 1800);
-    }
-
-    // ── LOGIN CON GOOGLE ──
-    function loginWithGoogle() {
-      const CLIENT_ID = 'TU_CLIENT_ID_AQUI.apps.googleusercontent.com';
-
-      // Si no está configurado aún, mostrar instrucciones
-      if (CLIENT_ID === 'TU_CLIENT_ID_AQUI.apps.googleusercontent.com') {
-        // Modo demo — simula login con Google
-        const demoUser = {
-          name: 'Usuario Google',
-          email: 'demo@gmail.com',
-          avatar: 'https://lh3.googleusercontent.com/a/default-user',
-          method: 'google'
-        };
-        saveSession(demoUser);
-        showWelcome(demoUser.name, 'Sesión iniciada con Google ✅');
-        setTimeout(() => window.location.href = 'dashboard.html', 1800);
-        return;
-      }
-
-      // Login real con Google
-      google.accounts.id.initialize({
-        client_id: CLIENT_ID,
-        callback: handleGoogleResponse
-      });
-      google.accounts.id.prompt();
-    }
-
-    function handleGoogleResponse(response) {
-      // Decodificar el JWT de Google
-      const payload = JSON.parse(atob(response.credential.split('.')[1]));
-      const user = {
-        name: payload.name,
-        email: payload.email,
-        avatar: payload.picture,
-        method: 'google'
-      };
-      saveSession(user);
-
-      // Actualizar perfil con datos de Google
-      const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
-      if (!profile.name) profile.name = payload.given_name || '';
-      if (!profile.lastname) profile.lastname = payload.family_name || '';
-      if (!profile.email) profile.email = payload.email;
-      if (!profile.avatar) profile.avatar = payload.picture;
-      localStorage.setItem('userProfile', JSON.stringify(profile));
-
-      showWelcome(payload.name, 'Sesión iniciada con Google ✅');
-      setTimeout(() => window.location.href = 'dashboard.html', 1800);
-    }
-
-    function saveSession(user) {
-      localStorage.setItem('currentSession', JSON.stringify({
-        ...user,
-        loginTime: Date.now()
-      }));
-    }
-  </script>
-
+      <p class="auth-footer">¿No tienes cuenta demo? <a href="register.html">Crea una</a></p>
+      <p class="auth-footer"><a href="dashboard.html">Seguir sin cuenta</a></p>
+    </section>
+  </main>
 </body>
 </html>

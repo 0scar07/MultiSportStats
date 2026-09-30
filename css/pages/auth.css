@@ -1,0 +1,20 @@
+/* Login y registro (sin sidebar) */
+.auth-body {
+  display: grid; place-items: center; min-height: 100vh; padding: var(--space-5) var(--space-4);
+  background:
+    radial-gradient(60% 50% at 20% 0%, var(--brand-soft), transparent 70%),
+    radial-gradient(50% 40% at 100% 100%, color-mix(in srgb, var(--sport-futbol) 12%, transparent), transparent 70%),
+    var(--bg);
+}
+.auth {
+  width: min(440px, 100%);
+}
+.auth__top { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4); }
+.auth-card { padding: var(--space-6) var(--space-5); }
+.auth-card h1 { font-size: var(--fs-xl); margin-bottom: var(--space-1); }
+.auth-card > p { color: var(--text-muted); margin-bottom: var(--space-5); }
+.auth-card .notice { margin-bottom: var(--space-5); }
+.auth-footer { margin-top: var(--space-4); text-align: center; font-size: var(--fs-sm); color: var(--text-muted); }
+.auth-footer a { color: var(--brand); font-weight: 600; }
+.auth-footer a:hover { text-decoration: underline; }
+.auth .brand { padding: 0; }

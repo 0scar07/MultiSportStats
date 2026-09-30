@@ -1,57 +1,78 @@
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MultiSport Stats — Registro</title>
-  <link rel="stylesheet" href="css/register.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crear cuenta · MultiSport Stats</title>
+  <meta name="description" content="Crea una cuenta demo local de MultiSport Stats.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <script src="js/core/theme-init.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/auth.css">
+  <script type="module" src="js/pages/auth-page.js"></script>
 </head>
-<body class="auth-body">
+<body class="auth-body" data-auth="register">
+  <main class="auth" id="main">
+    <div class="auth__top">
+      <a class="brand" href="dashboard.html" aria-label="MultiSport Stats, ir al inicio">
+        <span class="brand__mark"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17 7.5 8.5l3.5 6 3.5-7 3.5 9.5"/></svg></span>
+        <span>Multi<span>Sport</span> Stats</span>
+      </a>
+      <button type="button" class="btn btn--icon btn--ghost" data-action="theme" aria-label="Cambiar tema"></button>
+    </div>
 
-  <div class="auth-card">
-    <a class="auth-logo" href="login.html">🏆</a>
-    <h1>MultiSport Stats</h1>
-    <p class="subtitle">Crea tu cuenta gratis</p>
+    <section class="card auth-card" aria-labelledby="authTitle">
+      <h1 id="authTitle">Crear cuenta demo</h1>
+      <p>Guarda tu nombre y avatar en este navegador.</p>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label>Nombre</label>
-        <input type="text" placeholder="Juan"/>
+      <div class="notice" role="note">
+        <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#alert"></use></svg>
+        <span><strong>Solo es una demostración.</strong> La cuenta se guarda en este navegador y la contraseña
+          se guarda como hash (nunca en texto plano), pero no es un sistema de seguridad real. No reutilices contraseñas.</span>
       </div>
-      <div class="form-group">
-        <label>Apellido</label>
-        <input type="text" placeholder="Pérez"/>
-      </div>
-    </div>
 
-    <div class="form-group">
-      <label>Email</label>
-      <input type="email" placeholder="example@email.com"/>
-    </div>
-    <div class="form-group">
-      <label>Password</label>
-      <div class="input-wrap">
-        <input type="password" id="pwd1" placeholder="••••••••••"/>
-        <button class="eye-btn" onclick="togglePwd('pwd1', this)">👁</button>
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Confirmar Password</label>
-      <div class="input-wrap">
-        <input type="password" id="pwd2" placeholder="••••••••••"/>
-        <button class="eye-btn" onclick="togglePwd('pwd2', this)">👁</button>
-      </div>
-    </div>
+      <form id="authForm" novalidate>
+        <div class="field">
+          <label for="name">Nombre</label>
+          <input class="input" type="text" id="name" name="name" autocomplete="name" required aria-describedby="name-error">
+          <span class="field__error" id="name-error"></span>
+        </div>
+        <div class="field">
+          <label for="email">Correo electrónico</label>
+          <input class="input" type="email" id="email" name="email" autocomplete="email" required aria-describedby="email-error">
+          <span class="field__error" id="email-error"></span>
+        </div>
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <div class="input-group">
+            <input class="input" type="password" id="password" name="password" autocomplete="new-password" minlength="8" required aria-describedby="password-hint password-error">
+            <button type="button" class="btn btn--icon btn--ghost" data-toggle="password" aria-pressed="false" aria-label="Mostrar contraseña">
+              <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#eye"></use></svg>
+            </button>
+          </div>
+          <span class="field__hint" id="password-hint">Mínimo 8 caracteres.</span>
+          <span class="field__error" id="password-error"></span>
+        </div>
+        <div class="field">
+          <label for="confirm">Confirmar contraseña</label>
+          <div class="input-group">
+            <input class="input" type="password" id="confirm" name="confirm" autocomplete="new-password" required aria-describedby="confirm-error">
+            <button type="button" class="btn btn--icon btn--ghost" data-toggle="confirm" aria-pressed="false" aria-label="Mostrar contraseña">
+              <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#eye"></use></svg>
+            </button>
+          </div>
+          <span class="field__error" id="confirm-error"></span>
+        </div>
+        <p class="form-message" id="formMessage" role="status" aria-live="polite"></p>
+        <button type="submit" class="btn btn--primary btn--block">Crear cuenta</button>
+      </form>
 
-    <button class="btn-primary" onclick="window.location.href='dashboard.html'">Crear Cuenta</button>
-
-    <div class="auth-footer">
-      ¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a>
-    </div>
-  </div>
-
-
+      <p class="auth-footer">¿Ya tienes cuenta demo? <a href="login.html">Inicia sesión</a></p>
+    </section>
+  </main>
 </body>
 </html>
