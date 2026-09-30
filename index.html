@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MultiSport Stats · Cinco deportes, un solo marcador</title>
+  <meta name="description" content="Marcadores, tablas y fichas de La Liga, Premier League, NBA, Roland Garros, NHL y Fórmula 1 en una web rápida, accesible y sin anuncios. Proyecto de código abierto.">
+  <meta name="theme-color" content="#0b0f17">
+  <meta property="og:title" content="MultiSport Stats">
+  <meta property="og:description" content="Cinco deportes, un solo marcador. Partidos, tablas y fichas en una web de código abierto.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/img/landing/dashboard.webp">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <script>
+    /* Aplica el tema guardado por la app antes de pintar (oscuro por defecto). */
+    (function () {
+      var t = 'dark';
+      try { if (JSON.parse(localStorage.getItem('mss.theme')) === 'light') t = 'light'; } catch (e) {}
+      document.documentElement.dataset.theme = t;
+      document.documentElement.classList.add('js');
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="preload" as="image" href="assets/img/landing/dashboard.webp" fetchpriority="high">
+  <link rel="stylesheet" href="css/base.css?v=20260930">
+  <link rel="stylesheet" href="css/components.css?v=20260930">
+  <link rel="stylesheet" href="landing.css?v=20260930">
+  <script defer src="lib/gsap.min.js?v=20260930"></script>
+  <script defer src="lib/ScrollTrigger.min.js?v=20260930"></script>
+  <script defer src="lib/manifest.js?v=20260930"></script>
+  <script defer src="landing.js?v=20260930"></script>
+</head>
+<body class="landing">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="live" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8"/></symbol>
+    <symbol id="table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 14.5h18M9 9v11"/></symbol>
+    <symbol id="news" viewBox="0 0 24 24"><path d="M4 5h13v14H6a2 2 0 0 1-2-2z"/><path d="M17 8h3v9a2 2 0 0 1-2 2"/><path d="M7 9h7M7 12.5h7M7 16h4"/></symbol>
+    <symbol id="play" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z"/></symbol>
+    <symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+    <symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="star" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z"/></symbol>
+    <symbol id="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+    <symbol id="close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="chevron-right" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+    <symbol id="chevron-left" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></symbol>
+    <symbol id="futbol" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m12 7.5 4 2.9-1.5 4.7h-5L8 10.4z"/><path d="M12 3v4.5M16 10.4l4.3-1.4M14.5 15.1l2.7 3.7M9.5 15.1l-2.7 3.7M8 10.4 3.7 9"/></symbol>
+    <symbol id="baloncesto" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3v18M5.6 5.6c3.2 3.2 3.2 9.6 0 12.8M18.4 5.6c-3.2 3.2-3.2 9.6 0 12.8"/></symbol>
+    <symbol id="tenis" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.3 5.8a9 9 0 0 1 0 12.4M18.7 5.8a9 9 0 0 0 0 12.4"/></symbol>
+    <symbol id="hockey" viewBox="0 0 24 24"><path d="M13 3 8 16a2 2 0 0 1-1.9 1.3H3V21h4.4a4 4 0 0 0 3.7-2.6L16.5 3"/><ellipse cx="18.5" cy="19.5" rx="2.5" ry="1.5"/></symbol>
+    <symbol id="f1" viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4h14v9H5"/><path d="M9.7 4v9M14.3 4v9M5 8.5h14"/></symbol>
+    <symbol id="trophy" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 21h8M9.5 17h5"/></symbol>
+    <symbol id="calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+    <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+    <symbol id="check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="database" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+    <symbol id="flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></symbol>
+    <symbol id="code" viewBox="0 0 24 24"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/></symbol>
+    <symbol id="arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></symbol>
+  </svg>
+
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <div class="progress" aria-hidden="true"><span></span></div>
+
+  <!-- ============ Cabecera ============ -->
+  <header class="lp-nav">
+    <div class="lp-wrap lp-nav__inner">
+      <a class="brand" href="index.html" aria-label="MultiSport Stats, portada">
+        <span class="brand__mark"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17 7.5 8.5l3.5 6 3.5-7 3.5 9.5"/></svg></span>
+        <span>Multi<span>Sport</span> Stats</span>
+      </a>
+      <nav class="lp-nav__links" aria-label="Secciones">
+        <a href="#deportes">Deportes</a>
+        <a href="#funciones">Funciones</a>
+        <a href="#en-vivo">En vivo</a>
+        <a href="#capturas">Capturas</a>
+      </nav>
+      <div class="lp-nav__actions">
+        <button type="button" class="btn btn--icon btn--ghost" data-theme-toggle aria-label="Cambiar a modo claro">
+          <svg class="icon" aria-hidden="true"><use href="#sun"></use></svg>
+        </button>
+        <a class="btn btn--icon btn--ghost" href="https://github.com/0scar07/MultiSportStats" target="_blank" rel="noopener" aria-label="Código en GitHub (se abre en una pestaña nueva)">
+          <svg class="icon" aria-hidden="true"><use href="#code"></use></svg>
+        </a>
+        <a class="btn btn--primary" href="dashboard.html">Entrar</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <!-- ============ 1. Hero ============ -->
+    <section class="hero" aria-labelledby="hero-title" data-hero>
+      <div class="hero__glow" aria-hidden="true"></div>
+      <div class="hero__grid" aria-hidden="true"></div>
+
+      <div class="lp-wrap hero__inner">
+        <div class="hero__copy">
+          <p class="eyebrow reveal"><span class="badge badge--live">En vivo</span> Fútbol · NBA · Tenis · NHL · F1</p>
+          <h1 id="hero-title" class="hero__title reveal">Cinco deportes.<br><span class="grad">Un solo marcador.</span></h1>
+          <p class="hero__lead reveal">Partidos, tablas y fichas de La Liga, Premier League, NBA, Roland Garros, NHL y Fórmula 1 en una web rápida, accesible y sin anuncios.</p>
+          <div class="hero__ctas reveal">
+            <a class="btn btn--primary btn--lg" href="dashboard.html">
+              Entrar <svg class="icon" aria-hidden="true"><use href="#arrow-right"></use></svg>
+            </a>
+            <a class="btn btn--lg" href="#funciones">Ver qué incluye</a>
+          </div>
+          <p class="hero__note reveal">
+            <svg class="icon icon--sm" aria-hidden="true"><use href="#database"></use></svg>
+            Marcadores y tablas de APIs públicas (ESPN y Jolpica) cuando responden; si no, datos de demostración marcados como tales.
+          </p>
+        </div>
+
+        <div class="hero__stage" data-stage aria-hidden="false">
+          <figure class="device device--browser" data-tilt>
+            <div class="device__bar" aria-hidden="true">
+              <span></span><span></span><span></span>
+              <em>0scar07.github.io/MultiSportStats/dashboard.html</em>
+            </div>
+            <img src="assets/img/landing/dashboard.webp" width="1280" height="800" fetchpriority="high" loading="eager"
+                 alt="Captura del inicio de MultiSport Stats: partidos en vivo agrupados por liga, favoritos y clasificación de La Liga">
+          </figure>
+
+          <figure class="device device--phone" data-depth="0.6">
+            <img src="assets/img/landing/movil-inicio.webp" width="390" height="844" loading="eager"
+                 alt="La misma pantalla de inicio en un móvil">
+          </figure>
+
+          <div class="float-card float-card--score" data-depth="1.1" aria-hidden="true">
+            <span class="badge badge--live">En vivo</span>
+            <span class="fc-teams"><span class="crest crest--sm" style="--c:#990000">BAR</span> 2 <i>–</i> 1 <span class="crest crest--sm" style="--c:#f4f4f5;--crest-text:#0b0f17">RMA</span></span>
+            <span class="fc-clock" data-ticker>78'</span>
+          </div>
+          <div class="float-card float-card--table" data-depth="0.85" aria-hidden="true">
+            <svg class="icon" aria-hidden="true"><use href="#table"></use></svg>
+            <span><strong>Tablas ordenables</strong><small>Pulsa cualquier columna</small></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 2. Deportes ============ -->
+    <section class="lp-section sports" id="deportes" aria-labelledby="sports-title">
+      <div class="lp-wrap">
+        <header class="section-head reveal">
+          <p class="kicker">Cobertura</p>
+          <h2 id="sports-title">Seis competiciones, cada una con su color.</h2>
+          <p>El mismo acento te acompaña en filtros, tablas y fichas, así sabes de un vistazo qué estás mirando.</p>
+        </header>
+
+        <ul class="sports__list" role="list">
+          <li class="sport-card reveal" data-sport="futbol">
+            <svg class="icon" aria-hidden="true"><use href="#futbol"></use></svg>
+            <span class="sport-card__sport">Fútbol</span>
+            <strong>La Liga</strong>
+            <small>Marcadores y tabla · ESPN</small>
+          </li>
+          <li class="sport-card reveal" data-sport="futbol">
+            <svg class="icon" aria-hidden="true"><use href="#futbol"></use></svg>
+            <span class="sport-card__sport">Fútbol</span>
+            <strong>Premier League</strong>
+            <small>Marcadores y tabla · ESPN</small>
+          </li>
+          <li class="sport-card reveal" data-sport="baloncesto">
+            <svg class="icon" aria-hidden="true"><use href="#baloncesto"></use></svg>
+            <span class="sport-card__sport">Baloncesto</span>
+            <strong>NBA</strong>
+            <small>Marcadores y conferencias · ESPN</small>
+          </li>
+          <li class="sport-card reveal" data-sport="tenis">
+            <svg class="icon" aria-hidden="true"><use href="#tenis"></use></svg>
+            <span class="sport-card__sport">Tenis</span>
+            <strong>Roland Garros</strong>
+            <small>Cuadro final · demostración</small>
+          </li>
+          <li class="sport-card reveal" data-sport="hockey">
+            <svg class="icon" aria-hidden="true"><use href="#hockey"></use></svg>
+            <span class="sport-card__sport">Hockey</span>
+            <strong>NHL</strong>
+            <small>Marcadores y tabla · ESPN</small>
+          </li>
+          <li class="sport-card reveal" data-sport="f1">
+            <svg class="icon" aria-hidden="true"><use href="#f1"></use></svg>
+            <span class="sport-card__sport">Motor</span>
+            <strong>Fórmula 1</strong>
+            <small>Pilotos y carreras · Jolpica</small>
+          </li>
+        </ul>
+
+        <dl class="stats reveal">
+          <div><dt>Deportes</dt><dd><span data-count="5">5</span></dd></div>
+          <div><dt>Equipos y deportistas</dt><dd><span data-count="133">133</span></dd></div>
+          <div><dt>APIs públicas, sin clave</dt><dd><span data-count="2">2</span></dd></div>
+          <div><dt>Anuncios</dt><dd><span data-count="0">0</span></dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- ============ 3. Funciones (bento) ============ -->
+    <section class="lp-section" id="funciones" aria-labelledby="features-title">
+      <div class="lp-wrap">
+        <header class="section-head reveal">
+          <p class="kicker">Funciones</p>
+          <h2 id="features-title">Lo que necesitas un domingo de partidos.</h2>
+          <p>Cada tarjeta es una captura real del sitio. Pulsa para abrir esa sección.</p>
+        </header>
+
+        <div class="bento">
+          <a class="tile tile--xl reveal" href="live.html" data-tilt-soft>
+            <div class="tile__text">
+              <span class="tile__icon"><svg class="icon" aria-hidden="true"><use href="#live"></use></svg></span>
+              <h3>Partidos en vivo, próximos y resultados</h3>
+              <p>Filtra por deporte y por estado, busca un equipo y comparte la vista: los filtros viajan en la URL.</p>
+            </div>
+            <img src="assets/img/landing/partidos.webp" width="1280" height="800" loading="lazy" decoding="async"
+                 alt="Página de partidos con filtros por deporte y estado y la lista agrupada por liga">
+          </a>
+
+          <a class="tile tile--wide reveal" href="standings.html" data-tilt-soft>
+            <div class="tile__text">
+              <span class="tile__icon"><svg class="icon" aria-hidden="true"><use href="#table"></use></svg></span>
+              <h3>Tablas ordenables</h3>
+              <p>Ordena por puntos, goles o racha. Zonas europeas y de descenso, y filtro por conferencia en NBA y NHL.</p>
+            </div>
+            <img src="assets/img/landing/tablas.webp" width="1280" height="800" loading="lazy" decoding="async"
+                 alt="Tabla de La Liga con columnas ordenables y zonas de clasificación">
+          </a>
+
+          <a class="tile reveal" href="match.html?id=demo-laliga-1" data-tilt-soft>
+            <div class="tile__text">
+              <span class="tile__icon"><svg class="icon" aria-hidden="true"><use href="#clock"></use></svg></span>
+              <h3>Ficha de partido</h3>
+              <p>Cronología, estadísticas y, en F1, resultados de carrera.</p>
+            </div>
+            <img src="assets/img/landing/partido.webp" width="1280" height="800" loading="lazy" decoding="async"
+                 alt="Ficha de un partido con el marcador y la cronología de goles y tarjetas">
+          </a>
+
+          <a class="tile tile--tall reveal" href="standings.html?liga=nba" data-tilt-soft>
+            <div class="tile__text">
+              <span class="tile__icon"><svg class="icon" aria-hidden="true"><use href="#phone"></use></svg></span>
+              <h3>Pensada para el móvil</h3>
+              <p>Menú lateral que se pliega y tablas que se desplazan sin romper la página.</p>
+            </div>
+            <img class="tile__phone" src="assets/img/landing/movil-tablas.webp" width="390" height="844" loading="lazy" decoding="async"
+                 alt="Tabla de la NBA vista en un móvil">
+          </a>
+
+          <a class="tile reveal" href="profile.html#favoritos" data-tilt-soft>
+            <div class="tile__text">
+              <span class="tile__icon"><svg class="icon" aria-hidden="true"><use href="#star"></use></svg></span>
+              <h3>Favoritos</h3>
+              <p>Marca equipos, pilotos o ligas y verás sus partidos primero.</p>
+            </div>
+            <img src="assets/img/landing/perfil.webp" width="1280" height="800" loading="lazy" decoding="async"
+                 alt="Perfil con el gestor de favoritos y las preferencias de tema y fuente de datos">
+          </a>
+
+          <a class="tile reveal" href="search.html" data-tilt-soft>
+            <div class="tile__text">
+              <span class="tile__icon"><svg class="icon" aria-hidden="true"><use href="#search"></use></svg></span>
+              <h3>Búsqueda</h3>
+              <p>Equipos, deportistas, partidos y noticias desde una sola caja.</p>
+            </div>
+            <img src="assets/img/landing/buscar.webp" width="1280" height="800" loading="lazy" decoding="async"
+                 alt="Resultados de búsqueda de la palabra real agrupados en equipos y partidos">
+          </a>
+
+          <a class="tile reveal" href="news.html" data-tilt-soft>
+            <div class="tile__text">
+              <span class="tile__icon"><svg class="icon" aria-hidden="true"><use href="#news"></use></svg></span>
+              <h3>Noticias</h3>
+              <p>Guías por deporte con filtro y búsqueda. Son artículos de demostración.</p>
+            </div>
+            <img src="assets/img/landing/noticias.webp" width="1280" height="800" loading="lazy" decoding="async"
+                 alt="Portada de noticias con una guía destacada y tarjetas por deporte">
+          </a>
+
+          <a class="tile reveal" href="highlights.html" data-tilt-soft>
+            <div class="tile__text">
+              <span class="tile__icon"><svg class="icon" aria-hidden="true"><use href="#play"></use></svg></span>
+              <h3>Resúmenes</h3>
+              <p>Cada partido terminado enlaza a la búsqueda de su resumen en YouTube.</p>
+            </div>
+            <img src="assets/img/landing/resumenes.webp" width="1280" height="800" loading="lazy" decoding="async"
+                 alt="Tarjetas de resúmenes con el marcador final de cada partido">
+          </a>
+
+          <a class="tile tile--wide reveal" href="standings.html?liga=nba" data-tilt-soft>
+            <div class="tile__text">
+              <span class="tile__icon"><svg class="icon" aria-hidden="true"><use href="#sun"></use></svg></span>
+              <h3>Oscuro por defecto, claro cuando quieras</h3>
+              <p>El tema se guarda en tu navegador y se aplica también en esta portada.</p>
+            </div>
+            <img src="assets/img/landing/tablas-claro.webp" width="1280" height="800" loading="lazy" decoding="async"
+                 alt="Tabla de la NBA en modo claro">
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 4. En vivo (storytelling) ============ -->
+    <section class="live-story" id="en-vivo" aria-labelledby="live-title" data-story>
+      <div class="lp-wrap live-story__inner">
+        <div class="live-story__sticky">
+          <header class="section-head section-head--left">
+            <p class="kicker">En vivo</p>
+            <h2 id="live-title">Noventa minutos en un scroll.</h2>
+          </header>
+
+          <div class="board" data-board data-state="final">
+            <div class="board__top">
+              <span class="sport-tag" data-sport="futbol"><svg class="icon icon--sm" aria-hidden="true"><use href="#futbol"></use></svg> La Liga · Jornada 8</span>
+              <span class="board__status" data-status><span class="badge badge--final">Final</span></span>
+            </div>
+            <div class="board__main">
+              <div class="board__team">
+                <span class="crest crest--lg" style="--c:#990000">BAR</span>
+                <span>Barcelona</span>
+              </div>
+              <div class="board__score" aria-live="polite">
+                <strong><span data-home>2</span><i>–</i><span data-away>1</span></strong>
+                <span class="board__clock" data-clock>90'</span>
+              </div>
+              <div class="board__team">
+                <span class="crest crest--lg" style="--c:#f4f4f5;--crest-text:#0b0f17">RMA</span>
+                <span>Real Madrid</span>
+              </div>
+            </div>
+            <div class="board__bar" aria-hidden="true"><span data-bar></span></div>
+            <ol class="board__events" data-events>
+              <li data-min="12"><b>12'</b> Gol · Barcelona</li>
+              <li data-min="34"><b>34'</b> Tarjeta amarilla · Real Madrid</li>
+              <li data-min="51"><b>51'</b> Gol · Real Madrid</li>
+              <li data-min="69"><b>69'</b> Gol · Barcelona</li>
+            </ol>
+            <p class="board__note">Partido de ejemplo con los datos de demostración del sitio.</p>
+          </div>
+        </div>
+
+        <ol class="steps" data-steps>
+          <li class="step" data-step="0">
+            <span class="badge badge--upcoming">Próximo</span>
+            <h3>Antes del pitido</h3>
+            <p>El partido aparece en «Próximos» con su hora local y el día: hoy, mañana o la fecha.</p>
+          </li>
+          <li class="step" data-step="1">
+            <span class="badge badge--live">En vivo</span>
+            <h3>Empieza a rodar</h3>
+            <p>Pasa a «En vivo» con el minuto al lado. En La Liga, Premier League, NBA y NHL los marcadores llegan de la API pública de ESPN.</p>
+          </li>
+          <li class="step" data-step="2">
+            <span class="badge badge--live">Gol</span>
+            <h3>El marcador parpadea</h3>
+            <p>Con datos reales, la página se actualiza sola cada minuto mientras haya partidos en vivo. Cuando cambia un marcador, el número destella para que no se te escape.</p>
+          </li>
+          <li class="step" data-step="3">
+            <span class="badge badge--final">Cronología</span>
+            <h3>Cada jugada, en su minuto</h3>
+            <p>La ficha del partido ordena goles, tarjetas y cambios, y compara las estadísticas de los dos equipos.</p>
+          </li>
+          <li class="step" data-step="4">
+            <span class="badge badge--final">Final</span>
+            <h3>Y después, el resumen</h3>
+            <p>El resultado queda en «Finalizados» y en «Resúmenes», con un enlace directo a buscar el vídeo.</p>
+            <a class="btn btn--primary" href="live.html">Ver partidos <svg class="icon" aria-hidden="true"><use href="#arrow-right"></use></svg></a>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ 5. Galería ============ -->
+    <section class="lp-section" id="capturas" aria-labelledby="gallery-title">
+      <div class="lp-wrap">
+        <header class="section-head section-head--row reveal">
+          <div>
+            <p class="kicker">Capturas</p>
+            <h2 id="gallery-title">Así se ve, pantalla a pantalla.</h2>
+          </div>
+          <div class="gallery__controls">
+            <button type="button" class="btn btn--icon" data-gallery-prev aria-label="Capturas anteriores">
+              <svg class="icon" aria-hidden="true"><use href="#chevron-left"></use></svg>
+            </button>
+            <button type="button" class="btn btn--icon" data-gallery-next aria-label="Capturas siguientes">
+              <svg class="icon" aria-hidden="true"><use href="#chevron-right"></use></svg>
+            </button>
+          </div>
+        </header>
+      </div>
+
+      <ul class="gallery" data-gallery role="list" tabindex="0" aria-label="Galería de capturas, desplázate horizontalmente">
+        <li class="shot">
+          <button type="button" class="shot__btn" data-full="assets/img/landing/dashboard.webp">
+            <img src="assets/img/landing/dashboard.webp" width="1280" height="800" loading="lazy" decoding="async" alt="Inicio con partidos en vivo, favoritos y clasificación">
+          </button>
+          <p>Inicio</p>
+        </li>
+        <li class="shot">
+          <button type="button" class="shot__btn" data-full="assets/img/landing/partidos-claro.webp">
+            <img src="assets/img/landing/partidos-claro.webp" width="1280" height="800" loading="lazy" decoding="async" alt="Partidos de baloncesto filtrados, en modo claro">
+          </button>
+          <p>Partidos · filtro Baloncesto · modo claro</p>
+        </li>
+        <li class="shot shot--phone">
+          <button type="button" class="shot__btn" data-full="assets/img/landing/movil-partido.webp">
+            <img src="assets/img/landing/movil-partido.webp" width="390" height="844" loading="lazy" decoding="async" alt="Ficha de partido Liverpool contra Chelsea en un móvil">
+          </button>
+          <p>Ficha de partido · móvil</p>
+        </li>
+        <li class="shot">
+          <button type="button" class="shot__btn" data-full="assets/img/landing/partido.webp">
+            <img src="assets/img/landing/partido.webp" width="1280" height="800" loading="lazy" decoding="async" alt="Ficha del partido Barcelona contra Real Madrid con cronología">
+          </button>
+          <p>Ficha de partido</p>
+        </li>
+        <li class="shot">
+          <button type="button" class="shot__btn" data-full="assets/img/landing/tablas.webp">
+            <img src="assets/img/landing/tablas.webp" width="1280" height="800" loading="lazy" decoding="async" alt="Clasificación de La Liga">
+          </button>
+          <p>Tablas · La Liga</p>
+        </li>
+        <li class="shot shot--phone">
+          <button type="button" class="shot__btn" data-full="assets/img/landing/movil-tablas.webp">
+            <img src="assets/img/landing/movil-tablas.webp" width="390" height="844" loading="lazy" decoding="async" alt="Tabla de la NBA en un móvil">
+          </button>
+          <p>Tablas · móvil</p>
+        </li>
+        <li class="shot">
+          <button type="button" class="shot__btn" data-full="assets/img/landing/resumenes.webp">
+            <img src="assets/img/landing/resumenes.webp" width="1280" height="800" loading="lazy" decoding="async" alt="Resúmenes de partidos terminados">
+          </button>
+          <p>Resúmenes</p>
+        </li>
+        <li class="shot">
+          <button type="button" class="shot__btn" data-full="assets/img/landing/buscar.webp">
+            <img src="assets/img/landing/buscar.webp" width="1280" height="800" loading="lazy" decoding="async" alt="Buscador con resultados de equipos y partidos">
+          </button>
+          <p>Buscar</p>
+        </li>
+        <li class="shot">
+          <button type="button" class="shot__btn" data-full="assets/img/landing/noticias.webp">
+            <img src="assets/img/landing/noticias.webp" width="1280" height="800" loading="lazy" decoding="async" alt="Página de noticias">
+          </button>
+          <p>Noticias</p>
+        </li>
+        <li class="shot">
+          <button type="button" class="shot__btn" data-full="assets/img/landing/perfil.webp">
+            <img src="assets/img/landing/perfil.webp" width="1280" height="800" loading="lazy" decoding="async" alt="Perfil con favoritos y preferencias">
+          </button>
+          <p>Mi perfil</p>
+        </li>
+      </ul>
+      <p class="lp-wrap gallery__note">Capturas tomadas con los datos de demostración para mostrar todos los estados.</p>
+    </section>
+
+    <!-- ============ CTA final ============ -->
+    <section class="lp-section cta" aria-labelledby="cta-title">
+      <div class="lp-wrap cta__inner reveal">
+        <h2 id="cta-title">El marcador está esperando.</h2>
+        <p>Sin registro obligatorio: tus favoritos y tu tema se guardan en este navegador.</p>
+        <a class="btn btn--primary btn--lg" href="dashboard.html">Entrar <svg class="icon" aria-hidden="true"><use href="#arrow-right"></use></svg></a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ Footer ============ -->
+  <footer class="lp-footer">
+    <div class="lp-wrap lp-footer__grid">
+      <div>
+        <a class="brand" href="index.html" aria-label="MultiSport Stats, portada">
+          <span class="brand__mark"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17 7.5 8.5l3.5 6 3.5-7 3.5 9.5"/></svg></span>
+          <span>Multi<span>Sport</span> Stats</span>
+        </a>
+        <p class="lp-footer__about">Proyecto de código abierto hecho con HTML, CSS y JavaScript, sin frameworks ni build.</p>
+      </div>
+      <nav aria-label="El sitio">
+        <h2>El sitio</h2>
+        <ul role="list">
+          <li><a href="dashboard.html">Inicio</a></li>
+          <li><a href="live.html">Partidos</a></li>
+          <li><a href="standings.html">Tablas</a></li>
+          <li><a href="news.html">Noticias</a></li>
+          <li><a href="about.html">Acerca de</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h2>Código</h2>
+        <ul role="list">
+          <li><a href="https://github.com/0scar07/MultiSportStats" target="_blank" rel="noopener">github.com/0scar07/MultiSportStats <span class="sr-only">(se abre en una pestaña nueva)</span></a></li>
+          <li><a href="https://github.com/0scar07/MultiSportStats/blob/master/LICENSE" target="_blank" rel="noopener">Licencia MIT <span class="sr-only">(se abre en una pestaña nueva)</span></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="lp-wrap lp-footer__legal">
+      <p>Datos: ESPN (API pública no oficial) y Jolpica F1. Tenis y noticias son de demostración.</p>
+      <p>Sin afiliación con ligas, equipos ni medios. Sin logos oficiales. © 2026 Oscar Llanos · Licencia MIT.</p>
+    </div>
+  </footer>
+
+  <dialog class="lightbox" data-lightbox aria-label="Captura ampliada">
+    <button type="button" class="btn btn--icon lightbox__close" data-lightbox-close aria-label="Cerrar">
+      <svg class="icon" aria-hidden="true"><use href="#close"></use></svg>
+    </button>
+    <img src="assets/img/landing/dashboard.webp" width="1280" height="800" alt="" data-lightbox-img>
+  </dialog>
+</body>
+</html>
