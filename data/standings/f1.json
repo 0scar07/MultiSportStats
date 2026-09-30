@@ -1,0 +1,29 @@
+{
+"league": "f1",
+"season": "2026",
+"rows": [
+  {"rank":1,"team":{"id":"andrea-kimi-antonelli","name":"Andrea Kimi Antonelli","short":"ANT","color":"#27f4d2"},"constructor":"Mercedes","wins":8,"pts":302},
+  {"rank":2,"team":{"id":"george-russell","name":"George Russell","short":"RUS","color":"#27f4d2"},"constructor":"Mercedes","wins":3,"pts":236},
+  {"rank":3,"team":{"id":"lewis-hamilton","name":"Lewis Hamilton","short":"HAM","color":"#e8002d"},"constructor":"Ferrari","wins":1,"pts":199},
+  {"rank":4,"team":{"id":"lando-norris","name":"Lando Norris","short":"NOR","color":"#ff8000"},"constructor":"McLaren","wins":2,"pts":186},
+  {"rank":5,"team":{"id":"charles-leclerc","name":"Charles Leclerc","short":"LEC","color":"#e8002d"},"constructor":"Ferrari","wins":1,"pts":179},
+  {"rank":6,"team":{"id":"max-verstappen","name":"Max Verstappen","short":"VER","color":"#3671c6"},"constructor":"Red Bull","wins":0,"pts":163},
+  {"rank":7,"team":{"id":"oscar-piastri","name":"Oscar Piastri","short":"PIA","color":"#ff8000"},"constructor":"McLaren","wins":0,"pts":120},
+  {"rank":8,"team":{"id":"isack-hadjar","name":"Isack Hadjar","short":"HAD","color":"#3671c6"},"constructor":"Red Bull","wins":0,"pts":86},
+  {"rank":9,"team":{"id":"liam-lawson","name":"Liam Lawson","short":"LAW","color":"#3671c6"},"constructor":"Red Bull","wins":0,"pts":59},
+  {"rank":10,"team":{"id":"pierre-gasly","name":"Pierre Gasly","short":"GAS","color":"#ff87bc"},"constructor":"Alpine F1 Team","wins":0,"pts":41},
+  {"rank":11,"team":{"id":"arvid-lindblad","name":"Arvid Lindblad","short":"LIN","color":"#6692ff"},"constructor":"RB F1 Team","wins":0,"pts":37},
+  {"rank":12,"team":{"id":"franco-colapinto","name":"Franco Colapinto","short":"COL","color":"#ff87bc"},"constructor":"Alpine F1 Team","wins":0,"pts":27},
+  {"rank":13,"team":{"id":"oliver-bearman","name":"Oliver Bearman","short":"BEA","color":"#b6babd"},"constructor":"Haas F1 Team","wins":0,"pts":20},
+  {"rank":14,"team":{"id":"gabriel-bortoleto","name":"Gabriel Bortoleto","short":"BOR","color":"#bb0a30"},"constructor":"Audi","wins":0,"pts":10},
+  {"rank":15,"team":{"id":"nico-hulkenberg","name":"Nico Hülkenberg","short":"HUL","color":"#bb0a30"},"constructor":"Audi","wins":0,"pts":7},
+  {"rank":16,"team":{"id":"esteban-ocon","name":"Esteban Ocon","short":"OCO","color":"#b6babd"},"constructor":"Haas F1 Team","wins":0,"pts":7},
+  {"rank":17,"team":{"id":"carlos-sainz","name":"Carlos Sainz","short":"SAI","color":"#64c4ff"},"constructor":"Williams","wins":0,"pts":7},
+  {"rank":18,"team":{"id":"alexander-albon","name":"Alexander Albon","short":"ALB","color":"#64c4ff"},"constructor":"Williams","wins":0,"pts":5},
+  {"rank":19,"team":{"id":"fernando-alonso","name":"Fernando Alonso","short":"ALO","color":"#229971"},"constructor":"Aston Martin","wins":0,"pts":3},
+  {"rank":20,"team":{"id":"yuki-tsunoda","name":"Yuki Tsunoda","short":"TSU","color":"#6692ff"},"constructor":"RB F1 Team","wins":0,"pts":1},
+  {"rank":21,"team":{"id":"lance-stroll","name":"Lance Stroll","short":"STR","color":"#229971"},"constructor":"Aston Martin","wins":0,"pts":0},
+  {"rank":22,"team":{"id":"valtteri-bottas","name":"Valtteri Bottas","short":"BOT","color":"#c9b06b"},"constructor":"Cadillac F1 Team","wins":0,"pts":0},
+  {"rank":23,"team":{"id":"sergio-perez","name":"Sergio Pérez","short":"PER","color":"#c9b06b"},"constructor":"Cadillac F1 Team","wins":0,"pts":0}
+]
+}

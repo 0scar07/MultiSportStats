@@ -1,0 +1,26 @@
+{
+"league": "laliga",
+"season": "2026-27",
+"rows": [
+  {"rank":1,"team":{"id":"barcelona","name":"Barcelona","short":"BAR","color":"#990000"},"gp":7,"w":7,"d":0,"l":0,"gf":31,"ga":7,"pts":21},
+  {"rank":2,"team":{"id":"atletico-madrid","name":"Atlético Madrid","short":"ATM","color":"#ca3624"},"gp":7,"w":5,"d":1,"l":1,"gf":16,"ga":7,"pts":16},
+  {"rank":3,"team":{"id":"real-betis","name":"Real Betis","short":"BET","color":"#288a00"},"gp":7,"w":5,"d":1,"l":1,"gf":9,"ga":7,"pts":16},
+  {"rank":4,"team":{"id":"real-madrid","name":"Real Madrid","short":"RMA","color":"#ffffff"},"gp":7,"w":5,"d":0,"l":2,"gf":18,"ga":8,"pts":15},
+  {"rank":5,"team":{"id":"sevilla","name":"Sevilla","short":"SEV","color":"#ffffff"},"gp":7,"w":4,"d":1,"l":2,"gf":10,"ga":9,"pts":13},
+  {"rank":6,"team":{"id":"alaves","name":"Alavés","short":"ALA","color":"#0000ff"},"gp":7,"w":3,"d":2,"l":2,"gf":11,"ga":6,"pts":11},
+  {"rank":7,"team":{"id":"deportivo","name":"Deportivo","short":"DEP","color":"#3366cc"},"gp":7,"w":2,"d":4,"l":1,"gf":10,"ga":8,"pts":10},
+  {"rank":8,"team":{"id":"real-sociedad","name":"Real Sociedad","short":"RSO","color":"#3366cc"},"gp":7,"w":3,"d":1,"l":3,"gf":9,"ga":13,"pts":10},
+  {"rank":9,"team":{"id":"villarreal","name":"Villarreal","short":"VIL","color":"#ffff00"},"gp":7,"w":2,"d":2,"l":3,"gf":13,"ga":12,"pts":8},
+  {"rank":10,"team":{"id":"athletic-club","name":"Athletic Club","short":"ATH","color":"#c8142f"},"gp":6,"w":2,"d":2,"l":2,"gf":7,"ga":6,"pts":8},
+  {"rank":11,"team":{"id":"getafe","name":"Getafe","short":"GET","color":"#0000ff"},"gp":7,"w":2,"d":2,"l":3,"gf":4,"ga":7,"pts":8},
+  {"rank":12,"team":{"id":"rayo-vallecano","name":"Rayo Vallecano","short":"RAY","color":"#ffffff"},"gp":7,"w":2,"d":2,"l":3,"gf":11,"ga":16,"pts":8},
+  {"rank":13,"team":{"id":"osasuna","name":"Osasuna","short":"OSA","color":"#cd0000"},"gp":7,"w":2,"d":2,"l":3,"gf":6,"ga":13,"pts":8},
+  {"rank":14,"team":{"id":"celta-vigo","name":"Celta Vigo","short":"CEL","color":"#6cace4"},"gp":7,"w":1,"d":4,"l":2,"gf":8,"ga":6,"pts":7},
+  {"rank":15,"team":{"id":"espanyol","name":"Espanyol","short":"ESP","color":"#3366cc"},"gp":7,"w":2,"d":1,"l":4,"gf":10,"ga":10,"pts":7},
+  {"rank":16,"team":{"id":"racing-santander","name":"Racing Santander","short":"RAC","color":"#ffffff"},"gp":7,"w":2,"d":1,"l":4,"gf":11,"ga":21,"pts":7},
+  {"rank":17,"team":{"id":"levante","name":"Levante","short":"LEV","color":"#c8142f"},"gp":6,"w":1,"d":2,"l":3,"gf":8,"ga":12,"pts":5},
+  {"rank":18,"team":{"id":"elche","name":"Elche","short":"ELC","color":"#288a00"},"gp":7,"w":1,"d":2,"l":4,"gf":11,"ga":17,"pts":5},
+  {"rank":19,"team":{"id":"valencia","name":"Valencia","short":"VAL","color":"#ffffff"},"gp":7,"w":1,"d":1,"l":5,"gf":4,"ga":13,"pts":4},
+  {"rank":20,"team":{"id":"malaga","name":"Málaga","short":"MCF","color":"#b9e8f0"},"gp":7,"w":0,"d":3,"l":4,"gf":3,"ga":12,"pts":3}
+]
+}
