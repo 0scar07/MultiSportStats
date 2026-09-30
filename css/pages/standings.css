@@ -10,7 +10,7 @@
 @keyframes row-highlight { 0%, 40% { background: var(--brand-soft); } }
 .data-table td .fav-btn { width: 28px; height: 28px; }
 
-.bracket { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); align-items: start; }
+.bracket { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); align-items: start; }
 .bracket h3 { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border); font-size: var(--fs-sm); }
 .sets { display: flex; gap: 6px; padding: 0 var(--space-4) var(--space-3); flex-wrap: wrap; }
 .sets span {

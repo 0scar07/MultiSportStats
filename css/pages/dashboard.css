@@ -17,6 +17,10 @@
 .mini-table .data-table th:first-child, .mini-table .data-table td:first-child { padding-left: var(--space-4); }
 .mini-table .data-table th:last-child, .mini-table .data-table td:last-child { padding-right: var(--space-4); }
 
-@media (max-width: 960px) {
-  .dash-aside { position: static; order: -1; }
+@media (max-width: 1239px) {
+  .dash-aside { position: static; order: -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: start; }
+}
+
+@media (max-width: 700px) {
+  .dash-aside { order: 1; }
 }

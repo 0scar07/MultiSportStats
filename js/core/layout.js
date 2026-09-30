@@ -11,10 +11,18 @@ const BRAND = `
     <span>Multi<span>Sport</span> Stats</span>
   </a>`;
 
-function themeButton(extra = '') {
+const themeLabel = (dark) => (dark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
+
+function themeButton() {
   const dark = prefs.theme === 'dark';
-  return `<button type="button" class="btn btn--icon btn--ghost ${extra}" data-action="theme"
-    aria-label="${dark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}">${icon(dark ? 'sun' : 'moon')}</button>`;
+  return `<button type="button" class="btn btn--icon btn--ghost" data-action="theme"
+    aria-label="${themeLabel(dark)}">${icon(dark ? 'sun' : 'moon')}</button>`;
+}
+
+function themeRow() {
+  const dark = prefs.theme === 'dark';
+  return `<button type="button" class="btn btn--ghost btn--block sidebar__theme" data-action="theme" data-labelled>
+    ${icon(dark ? 'sun' : 'moon')} <span>${dark ? 'Modo claro' : 'Modo oscuro'}</span></button>`;
 }
 
 function userBlock() {
@@ -49,7 +57,7 @@ function sidebar(page) {
       </div>
       <nav class="nav">${links}</nav>
       <div class="sidebar__footer">
-        <div class="sidebar__row">${themeButton('sidebar__theme')}<span class="data-note" style="align-self:center">Tema</span></div>
+        ${themeRow()}
         ${userBlock()}
       </div>
     </aside>`;
@@ -70,14 +78,18 @@ function topbar() {
 function setNav(open) {
   document.body.classList.toggle('nav-open', open);
   document.querySelector('[data-action="open-nav"]')?.setAttribute('aria-expanded', String(open));
-  if (open) document.querySelector('#sidebar .nav__item')?.focus();
+  if (open) requestAnimationFrame(() => document.querySelector('#sidebar .nav__item')?.focus());
 }
 
 function refreshThemeButtons() {
   const dark = prefs.theme === 'dark';
   document.querySelectorAll('[data-action="theme"]').forEach((b) => {
-    b.innerHTML = icon(dark ? 'sun' : 'moon');
-    b.setAttribute('aria-label', dark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
+    if (b.hasAttribute('data-labelled')) {
+      b.innerHTML = `${icon(dark ? 'sun' : 'moon')} <span>${dark ? 'Modo claro' : 'Modo oscuro'}</span>`;
+    } else {
+      b.innerHTML = icon(dark ? 'sun' : 'moon');
+      b.setAttribute('aria-label', themeLabel(dark));
+    }
   });
 }
 
