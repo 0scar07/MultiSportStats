@@ -1,0 +1,203 @@
+/* ==========================================================================
+   MultiSport Stats — base.css
+   Tokens de diseño, temas (oscuro por defecto / claro), reset y tipografía.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root {
+  /* Marca */
+  --brand: #8b7bff;
+  --brand-strong: #6f5cf5;
+  --brand-contrast: #0b0a1f;
+  --brand-soft: rgb(139 123 255 / 0.16);
+
+  /* Acento por deporte */
+  --sport-futbol: #22c55e;
+  --sport-baloncesto: #fb923c;
+  --sport-tenis: #eab308;
+  --sport-hockey: #38bdf8;
+  --sport-f1: #f43f5e;
+
+  /* Estados */
+  --live: #ff4d4f;
+  --live-soft: rgb(255 77 79 / 0.14);
+  --success: #22c55e;
+  --warning: #f5b83d;
+  --danger: #ff6b6b;
+
+  /* Tipografía */
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.8125rem;
+  --fs-md: 0.9375rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 2rem;
+
+  /* Espaciado (base 4px) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  /* Radios */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* Movimiento */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-fast: 120ms;
+  --dur: 220ms;
+
+  /* Layout */
+  --sidebar-w: 240px;
+  --topbar-h: 56px;
+  --content-max: 1200px;
+}
+
+/* ---------- Tema oscuro (por defecto) ---------- */
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0b0f17;
+  --surface: #121826;
+  --surface-2: #1a2233;
+  --surface-3: #232d42;
+  --border: #263149;
+  --text: #e8ecf4;
+  --text-muted: #a3aec4;
+  --text-subtle: #8190aa;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 6px 20px rgb(0 0 0 / 0.35);
+  --shadow-lg: 0 18px 48px rgb(0 0 0 / 0.5);
+  --focus: #b3a8ff;
+  --skeleton-a: #1a2233;
+  --skeleton-b: #232d42;
+}
+
+/* ---------- Tema claro ---------- */
+[data-theme='light'] {
+  color-scheme: light;
+  --brand: #5b45e0;
+  --brand-strong: #4a35cc;
+  --brand-contrast: #ffffff;
+  --brand-soft: rgb(91 69 224 / 0.1);
+  --sport-futbol: #15803d;
+  --sport-baloncesto: #c2410c;
+  --sport-tenis: #a16207;
+  --sport-hockey: #0369a1;
+  --sport-f1: #be123c;
+  --live: #d92d20;
+  --live-soft: rgb(217 45 32 / 0.1);
+  --success: #15803d;
+  --warning: #b45309;
+  --danger: #c0262d;
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --surface-2: #eef1f7;
+  --surface-3: #e2e7f0;
+  --border: #d5dbe7;
+  --text: #0f172a;
+  --text-muted: #475467;
+  --text-subtle: #5d6b82;
+  --shadow-sm: 0 1px 2px rgb(15 23 42 / 0.06);
+  --shadow-md: 0 6px 20px rgb(15 23 42 / 0.08);
+  --shadow-lg: 0 18px 48px rgb(15 23 42 / 0.14);
+  --focus: #5b45e0;
+  --skeleton-a: #eef1f7;
+  --skeleton-b: #e2e7f0;
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+img, svg, video { display: block; max-width: 100%; }
+input, button, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+a { color: inherit; text-decoration: none; }
+table { border-collapse: collapse; width: 100%; }
+[hidden] { display: none !important; }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+h1 { font-size: var(--fs-2xl); }
+h2 { font-size: var(--fs-lg); }
+h3 { font-size: var(--fs-md); }
+
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- Foco visible ---------- */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- Utilidades ---------- */
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+.skip-link {
+  position: absolute; left: var(--space-3); top: -100px; z-index: 100;
+  padding: var(--space-2) var(--space-4);
+  background: var(--brand); color: var(--brand-contrast);
+  border-radius: var(--radius-md); font-weight: 600;
+}
+.skip-link:focus { top: var(--space-3); }
+
+.muted { color: var(--text-muted); }
+
+.icon {
+  width: 1.25em; height: 1.25em;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.icon--sm { width: 1em; height: 1em; }
+.icon--lg { width: 1.75em; height: 1.75em; }
+.icon--filled { fill: currentColor; }
+
+/* Colores de deporte como variable local reutilizable */
+[data-sport='futbol'] { --sport: var(--sport-futbol); }
+[data-sport='baloncesto'] { --sport: var(--sport-baloncesto); }
+[data-sport='tenis'] { --sport: var(--sport-tenis); }
+[data-sport='hockey'] { --sport: var(--sport-hockey); }
+[data-sport='f1'] { --sport: var(--sport-f1); }
+
+/* ---------- Movimiento reducido ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
