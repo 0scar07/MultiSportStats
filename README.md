@@ -4,8 +4,8 @@ Marcadores, calendarios y clasificaciones de **fútbol (La Liga y Premier League
 
 Está hecha con HTML, CSS y JavaScript sin frameworks: no hay build, no hay npm y no hay servidor propio.
 
+- **Web publicada:** https://0scar07.github.io/MultiSportStats/ (portada) · [entrar a la app](https://0scar07.github.io/MultiSportStats/dashboard.html)
 - **Repositorio:** https://github.com/0scar07/MultiSportStats
-- **Web (GitHub Pages):** https://0scar07.github.io/MultiSportStats/dashboard.html
 
 ![Inicio de MultiSport Stats en modo oscuro](docs/screenshots/inicio.webp)
 
@@ -60,6 +60,10 @@ No hay backend: las cuentas **solo existen en el navegador** donde se crean.
 
 ```
 MultiSportStats/
+├── index.html            # Portada (landing) → botón «Entrar» a dashboard.html
+├── landing.css           # Estilos de la portada (usa los tokens de css/base.css)
+├── landing.js            # Animaciones de la portada (script clásico, sin módulos)
+├── lib/                  # GSAP + ScrollTrigger (locales) y manifest.js de la portada
 ├── dashboard.html        # Inicio (entrada de la app)
 ├── live.html             # Partidos: en vivo, próximos y resultados
 ├── standings.html        # Tablas de posiciones
@@ -95,11 +99,12 @@ MultiSportStats/
 ├── assets/
 │   ├── icons.svg         # Sprite de íconos SVG propios
 │   ├── favicon.svg
-│   └── img/news/         # Fotos en WebP
+│   ├── img/news/         # Fotos en WebP
+│   └── img/landing/      # Capturas reales del sitio usadas en la portada (WebP)
 └── docs/screenshots/     # Capturas del README
 ```
 
-El `index.html` de la raíz se deja libre a propósito para la futura landing page. Hasta que exista, la app se abre en `dashboard.html`.
+`index.html` es la portada: presenta el proyecto con capturas reales y lleva a la app con el botón «Entrar». El logo de la app vuelve a la portada. `.nojekyll` evita que GitHub Pages procese el sitio con Jekyll.
 
 ## Cómo correrlo en local
 
@@ -109,14 +114,14 @@ La app usa módulos ES y `fetch` de archivos JSON, así que **no funciona abrien
 python -m http.server 8000
 ```
 
-Luego abre http://localhost:8000/dashboard.html
+Luego abre http://localhost:8000/ (portada) o http://localhost:8000/dashboard.html (app)
 
 También puedes usar la extensión **Live Server** de VS Code (clic derecho en `dashboard.html` → *Open with Live Server*).
 
 ## Publicar en GitHub Pages
 
 1. *Settings → Pages → Build and deployment*: fuente **Deploy from a branch**, rama **master**, carpeta **/ (root)**.
-2. La app queda en https://0scar07.github.io/MultiSportStats/dashboard.html.
+2. La portada queda en https://0scar07.github.io/MultiSportStats/ y la app en https://0scar07.github.io/MultiSportStats/dashboard.html.
 
 Todas las rutas son relativas, así que funciona tanto en la subcarpeta de Pages como en local.
 
@@ -136,4 +141,10 @@ Todas las rutas son relativas, así que funciona tanto en la subcarpeta de Pages
 - Datos: ESPN (no oficial) y [Jolpica F1](https://github.com/jolpica/jolpica-f1).
 - MultiSport Stats no está afiliado a ninguna liga, equipo ni medio.
 
+- Animaciones de la portada con [GSAP](https://gsap.com) y ScrollTrigger (copias locales en `lib/`).
+
 Equipo: Oscar Llanos, Nelson Sierra y Joseph De La Rans.
+
+## Licencia
+
+[MIT](LICENSE) © 2026 Oscar Llanos.
