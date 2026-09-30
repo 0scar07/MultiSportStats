@@ -348,8 +348,9 @@
   </main>
 
   <script>
-    const API_KEY = 'de9172e8894f793288ab4b3778e6a695';
-    const PROXY   = 'https://corsproxy.io/?';
+    // API-Sports retirada: la clave estaba expuesta en el código público.
+    const API_KEY = '';
+    const PROXY   = '';
 
     let allMatches   = [];
     let activeSport  = 'futbol';
@@ -359,6 +360,7 @@
     // ── FETCH ──
     async function fetchFootball() {
       const url = PROXY + encodeURIComponent('https://v3.football.api-sports.io/fixtures?live=all');
+      if (!API_KEY) throw new Error('Sin API configurada');
       const res = await fetch(url, { headers: { 'x-apisports-key': API_KEY } });
       const data = await res.json();
       if (!data.response) return [];
@@ -381,6 +383,7 @@
     async function fetchBasketball() {
       const today = new Date().toISOString().split('T')[0];
       const url = PROXY + encodeURIComponent(`https://v2.nba.api-sports.io/games?date=${today}`);
+      if (!API_KEY) throw new Error('Sin API configurada');
       const res = await fetch(url, { headers: { 'x-apisports-key': API_KEY } });
       const data = await res.json();
       if (!data.response) return [];
@@ -399,6 +402,7 @@
     async function fetchHockey() {
       const today = new Date().toISOString().split('T')[0];
       const url = PROXY + encodeURIComponent(`https://v1.hockey.api-sports.io/games?date=${today}`);
+      if (!API_KEY) throw new Error('Sin API configurada');
       const res = await fetch(url, { headers: { 'x-apisports-key': API_KEY } });
       const data = await res.json();
       if (!data.response) return [];

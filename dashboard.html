@@ -366,8 +366,9 @@
   </main>
 
   <script>
-    const API_KEY  = 'de9172e8894f793288ab4b3778e6a695';
-    const PROXY    = 'https://corsproxy.io/?';
+    // API-Sports retirada: la clave estaba expuesta en el código público.
+    const API_KEY = '';
+    const PROXY   = '';
     const CACHE_TTL = 30 * 60 * 1000;
 
     function getCache(key) {
@@ -384,6 +385,7 @@
       const cached = getCache(cacheKey);
       if (cached) return cached;
       const url = PROXY + encodeURIComponent('https://v3.football.api-sports.io/' + endpoint);
+      if (!API_KEY) throw new Error('Sin API configurada');
       const res = await fetch(url, { headers: { 'x-apisports-key': API_KEY } });
       const data = await res.json();
       if (data.response) setCache(cacheKey, data.response);
@@ -521,7 +523,8 @@
               const url = PROXY + encodeURIComponent(
                 `https://v3.football.api-sports.io/fixtures?league=${league}&season=${season}&date=${dateStr}&status=NS`
               );
-              const res = await fetch(url, { headers: { 'x-apisports-key': API_KEY } });
+              if (!API_KEY) throw new Error('Sin API configurada');
+      const res = await fetch(url, { headers: { 'x-apisports-key': API_KEY } });
               const data = await res.json();
               if (data.response?.length > 0) {
                 setCache(`up_${league}_${dateStr}`, data.response);
