@@ -103,6 +103,20 @@ export function leagueGroups(matches, sources = {}) {
     .join('');
 }
 
+/**
+ * Anima los marcadores que cambiaron respecto al render anterior.
+ * Recibe el mapa previo y devuelve el nuevo (clave: id de partido + lado).
+ */
+export function flashScores(root, prev = new Map()) {
+  const next = new Map();
+  root.querySelectorAll('.match[data-id] [data-score]').forEach((el) => {
+    const key = `${el.closest('.match').dataset.id}:${el.dataset.score}`;
+    next.set(key, el.textContent);
+    if (prev.has(key) && prev.get(key) !== el.textContent) el.classList.add('score--flash');
+  });
+  return next;
+}
+
 // ---------- Estados ----------
 export function skeletonRows(n = 4) {
   const row = `<div class="skeleton-row"><span class="skeleton" style="height:14px"></span><span><span class="skeleton" style="height:14px;width:70%;margin-bottom:8px"></span><span class="skeleton" style="height:14px;width:55%"></span></span><span class="skeleton" style="height:28px"></span></div>`;

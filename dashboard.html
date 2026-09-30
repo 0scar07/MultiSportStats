@@ -1,645 +1,89 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MultiSport Stats — Dashboard</title>
-  <link rel="stylesheet" href="css/dashboard.css"/>
-  <style>
-    /* ── FAVORITOS ── */
-    .favs-section {
-      background: white; border-radius: 10px; padding: 16px 20px;
-      border: 1px solid #e2e8f0; margin-bottom: 16px;
-    }
-    .favs-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .favs-section-title { font-size: 12px; font-weight: 800; color: #1a2535; text-transform: uppercase; letter-spacing: 0.8px; }
-    .favs-edit-link { font-size: 11px; font-weight: 700; color: #22c55e; text-decoration: none; }
-    .favs-edit-link:hover { opacity: 0.7; }
-    .favs-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-    .fav-chip {
-      display: flex; align-items: center; gap: 5px; padding: 5px 10px;
-      background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 20px;
-      font-size: 11px; font-weight: 700; color: #166534;
-    }
-    .fav-chip img { width: 16px; height: 16px; object-fit: contain; }
-    .fav-chip:hover { background: #dcfce7; }
-    .favs-empty { font-size: 12px; color: #8a9ab0; display: flex; align-items: center; gap: 6px; }
-
-    /* ── SIDEBAR PERFIL ── */
-    .sidebar-profile {
-      display: flex; align-items: center; gap: 10px; padding: 12px 14px;
-      margin: 6px 10px; border-radius: 8px; background: rgba(255,255,255,0.05);
-      cursor: pointer; text-decoration: none; transition: background .2s;
-    }
-    .sidebar-profile:hover { background: rgba(255,255,255,0.1); }
-    .sidebar-avatar {
-      width: 30px; height: 30px; border-radius: 50%;
-      background: linear-gradient(135deg, #2e7d32, #22c55e);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; flex-shrink: 0; overflow: hidden;
-    }
-    .sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .sidebar-profile-name { font-size: 12px; font-weight: 700; color: white; }
-    .sidebar-profile-sub { font-size: 10px; color: #8a9ab0; }
-
-    /* ── API BADGE ── */
-    .api-badge {
-      display: inline-flex; align-items: center; gap: 4px;
-      background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);
-      color: #22c55e; font-size: 10px; font-weight: 700;
-      padding: 2px 7px; border-radius: 20px; margin-left: 8px; vertical-align: middle;
-    }
-
-    /* ── SECTION HEADER estilo Flashscore ── */
-    .fs-section-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin: 20px 0 8px;
-    }
-    .fs-section-title {
-      font-size: 13px; font-weight: 800; color: #1a2535;
-      text-transform: uppercase; letter-spacing: 0.5px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .fs-section-link {
-      font-size: 11px; font-weight: 700; color: #22c55e;
-      text-decoration: none;
-    }
-    .fs-section-link:hover { opacity: 0.7; }
-
-    /* ── GRUPO LIGA (live) estilo Flashscore ── */
-    .fs-group {
-      background: white; border-radius: 8px;
-      border: 1px solid #e2e8f0; margin-bottom: 6px; overflow: hidden;
-    }
-    .fs-group-header {
-      display: flex; align-items: center; gap: 8px;
-      padding: 7px 12px; background: #f8faf9;
-      border-bottom: 1px solid #e2e8f0;
-    }
-    .fs-group-header img { width: 16px; height: 16px; object-fit: contain; }
-    .fs-group-country { font-size: 10px; font-weight: 800; color: #8a9ab0; text-transform: uppercase; letter-spacing: 0.5px; }
-    .fs-group-name { font-size: 11px; font-weight: 800; color: #1a2535; flex: 1; }
-    .fs-group-live { font-size: 10px; font-weight: 700; color: #e53935; }
-
-    /* ── FILA PARTIDO ── */
-    .fs-row {
-      display: flex; align-items: center;
-      padding: 0 12px; min-height: 44px;
-      border-bottom: 1px solid #f4f6f8;
-      cursor: pointer; transition: background .1s;
-    }
-    .fs-row:last-child { border-bottom: none; }
-    .fs-row:hover { background: #fafbfc; }
-    .fs-row-status { width: 46px; flex-shrink: 0; text-align: center; }
-    .fs-live-min {
-      font-size: 11px; font-weight: 800; color: #e53935;
-      display: flex; flex-direction: column; align-items: center; gap: 1px;
-    }
-    .fs-blink {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: #e53935; animation: blink 1s infinite; display: block; margin: 0 auto;
-    }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
-    .fs-row-teams { flex: 1; padding: 4px 8px; min-width: 0; }
-    .fs-team { display: flex; align-items: center; gap: 6px; padding: 2px 0; }
-    .fs-team img { width: 15px; height: 15px; object-fit: contain; flex-shrink: 0; }
-    .fs-team-name { font-size: 12px; font-weight: 600; color: #1a2535; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .fs-row-scores { width: 22px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; }
-    .fs-score { font-size: 13px; font-weight: 800; color: #e53935; line-height: 1; }
-
-    @keyframes scoreFlash {
-      0% { background: #fef08a; transform: scale(1.3); border-radius: 3px; }
-      100% { background: transparent; transform: scale(1); }
-    }
-    .score-flash { animation: scoreFlash 0.7s ease-out; }
-
-    /* ── PRÓXIMOS estilo Flashscore ── */
-    .fs-upcoming-group {
-      background: white; border-radius: 8px;
-      border: 1px solid #e2e8f0; margin-bottom: 6px; overflow: hidden;
-    }
-    .fs-upcoming-header {
-      display: flex; align-items: center; gap: 8px;
-      padding: 7px 12px; background: #f8faf9;
-      border-bottom: 1px solid #e2e8f0;
-    }
-    .fs-upcoming-header img { width: 16px; height: 16px; object-fit: contain; }
-    .fs-upcoming-league-name { font-size: 11px; font-weight: 800; color: #1a2535; flex: 1; }
-    .fs-upcoming-row {
-      display: flex; align-items: center;
-      padding: 0 12px; min-height: 44px;
-      border-bottom: 1px solid #f4f6f8;
-    }
-    .fs-upcoming-row:last-child { border-bottom: none; }
-    .fs-upcoming-row:hover { background: #fafbfc; }
-    .fs-upcoming-time-col { width: 46px; flex-shrink: 0; text-align: center; font-size: 12px; font-weight: 700; color: #1a2535; }
-    .fs-upcoming-teams { flex: 1; padding: 4px 8px; }
-    .fs-upcoming-team { display: flex; align-items: center; gap: 6px; padding: 2px 0; }
-    .fs-upcoming-team img { width: 15px; height: 15px; object-fit: contain; }
-    .fs-upcoming-team-name { font-size: 12px; font-weight: 600; color: #1a2535; }
-    .fs-upcoming-day { font-size: 10px; font-weight: 700; color: #22c55e; text-align: right; padding-right: 4px; }
-
-    /* ── TABLA POSICIONES ── */
-    .league-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 10px; }
-    .league-tab {
-      display: flex; align-items: center; gap: 5px;
-      padding: 5px 12px; border-radius: 20px;
-      border: 1.5px solid #e2e8f0; background: white;
-      font-size: 11px; font-weight: 700; color: #8a9ab0;
-      cursor: pointer; transition: all .2s;
-    }
-    .league-tab:hover { border-color: #22c55e; color: #1a2535; }
-    .league-tab.active { background: #0f1923; border-color: #0f1923; color: white; }
-
-    .standings-wrap {
-      background: white; border-radius: 8px;
-      border: 1px solid #e2e8f0; overflow: hidden; margin-bottom: 20px;
-    }
-    .standings-wrap table { width: 100%; border-collapse: collapse; }
-    .standings-wrap thead tr { background: #f8faf9; }
-    .standings-wrap th {
-      padding: 8px 12px; font-size: 10px; font-weight: 700;
-      color: #8a9ab0; text-transform: uppercase; letter-spacing: 0.5px;
-      text-align: center; border-bottom: 1px solid #e2e8f0;
-    }
-    .standings-wrap th:nth-child(2) { text-align: left; }
-    .standings-wrap td {
-      padding: 8px 12px; font-size: 12px; color: #1a2535;
-      border-bottom: 1px solid #f4f6f8; text-align: center;
-    }
-    .standings-wrap td:nth-child(2) { text-align: left; }
-    .standings-wrap tr:last-child td { border-bottom: none; }
-    .standings-wrap tr:hover td { background: #fafbfc; }
-    .std-pos { font-weight: 800; }
-    .std-pos.top { color: #22c55e; }
-    .std-pts { font-weight: 800; color: #0f1923; }
-    .std-team { display: flex; align-items: center; gap: 7px; font-weight: 600; }
-    .std-team img { width: 20px; height: 20px; object-fit: contain; }
-    .form-badge {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 16px; height: 16px; border-radius: 3px;
-      font-size: 9px; font-weight: 800; color: white; margin: 0 1px;
-    }
-    .form-badge.W { background: #22c55e; }
-    .form-badge.D { background: #f59e0b; }
-    .form-badge.L { background: #ef4444; }
-
-    /* spinner */
-    .mini-spinner {
-      display: inline-block; width: 12px; height: 12px;
-      border: 2px solid #e2e8f0; border-top-color: #22c55e;
-      border-radius: 50%; animation: spin .6s linear infinite;
-      vertical-align: middle; margin-left: 6px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── TOAST ── */
-    .goal-toast {
-      position: fixed; top: 20px; right: 24px;
-      background: linear-gradient(135deg, #166534, #22c55e);
-      color: white; padding: 12px 18px; border-radius: 12px;
-      font-weight: 700; font-size: 13px;
-      box-shadow: 0 8px 30px rgba(34,197,94,0.4);
-      z-index: 9999; transform: translateX(200%);
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-      min-width: 200px;
-    }
-    .goal-toast.show { transform: translateX(0); }
-    .toast-title { font-size: 9px; font-weight: 800; letter-spacing: 1.5px; opacity: 0.8; margin-bottom: 3px; }
-    .toast-body { font-size: 14px; font-weight: 800; }
-    .toast-sub { font-size: 11px; opacity: 0.8; margin-top: 2px; }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inicio · MultiSport Stats</title>
+  <meta name="description" content="Marcadores, próximos partidos y tablas de fútbol, NBA, tenis, NHL y Fórmula 1 en un solo lugar.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <script src="js/core/theme-init.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/dashboard.css">
+  <script type="module" src="js/pages/dashboard.js"></script>
 </head>
-<body class="app-body">
+<body data-page="dashboard">
+  <a class="skip-link" href="#main">Saltar al contenido</a>
 
-  <div class="goal-toast" id="goalToast">
-    <div class="toast-title" id="toastTitle">⚽ GOLAZO</div>
-    <div class="toast-body" id="toastBody"></div>
-    <div class="toast-sub" id="toastSub"></div>
-  </div>
-
-  <aside class="sidebar">
-    <a class="sidebar-logo" href="dashboard.html">
-      <div class="sidebar-logo-icon">🏆</div>
-      <div class="sidebar-logo-text">Multi<span>Sport</span><br>Stats</div>
-    </a>
-    <nav class="sidebar-nav">
-      <a class="nav-item active" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
-      <a class="nav-item" href="live.html"><span class="nav-icon">📊</span> Live Matches</a>
-      <a class="nav-item" href="standings.html"><span class="nav-icon">🏅</span> Standings</a>
-      <a class="nav-item" href="news.html"><span class="nav-icon">📰</span> Noticias</a>
-      <a class="nav-item" href="highlights.html"><span class="nav-icon">🎬</span> Highlights</a>
-      <a class="nav-item" href="search.html"><span class="nav-icon">🔍</span> Buscar</a>
-      <a class="nav-item" href="profile.html"><span class="nav-icon">👤</span> Mi Perfil</a>
-      <a class="nav-item" href="about.html"><span class="nav-icon">ℹ️</span> About Us</a>
-    </nav>
-    <div class="sidebar-footer">
-      <a class="sidebar-profile" href="profile.html">
-        <div class="sidebar-avatar" id="sidebarAvatar">😎</div>
-        <div>
-          <div class="sidebar-profile-name" id="sidebarName">Mi Perfil</div>
-          <div class="sidebar-profile-sub" id="sidebarUsername">Ver perfil →</div>
-        </div>
-      </a>
-      <a class="logout-btn" href="login.html"><span>↩</span> Logout</a>
-    </div>
-  </aside>
-
-  <main class="main">
-    <div class="page-title">
-      Dashboard
-      <span class="live-badge"><span class="live-dot"></span>LIVE</span>
-      <span class="api-badge" id="apiBadge" style="display:none">⚡ API REAL</span>
-    </div>
-
-    <!-- ⭐ FAVORITOS -->
-    <div class="favs-section">
-      <div class="favs-section-header">
-        <span class="favs-section-title">⭐ Mis favoritos</span>
-        <a class="favs-edit-link" href="profile.html">Editar →</a>
+  <main id="main" class="main">
+    <header class="page-header">
+      <div>
+        <h1>Inicio</h1>
+        <p id="today">Resumen deportivo del día</p>
       </div>
-      <div class="favs-chips" id="favsChips">
-        <span class="favs-empty">
-          No tienes favoritos aún.
-          <a href="profile.html" style="color:#22c55e;font-weight:700;text-decoration:none;">Agregar →</a>
-        </span>
-      </div>
-    </div>
+      <div class="page-header__actions" id="sourceNote"></div>
+    </header>
 
-    <!-- PARTIDOS EN VIVO -->
-    <div class="fs-section-header">
-      <span class="fs-section-title">
-        🔴 <span id="liveTitle">Partidos en vivo</span>
-        <span id="liveSpinner" class="mini-spinner" style="display:none"></span>
-      </span>
-      <a class="fs-section-link" href="live.html">Ver todos →</a>
-    </div>
-    <div id="liveGrid">
-      <!-- fallback estático -->
-      <div class="fs-group">
-        <div class="fs-group-header">
-          <span class="fs-group-name">La Liga</span>
-          <span class="fs-group-live">● 1 en vivo</span>
-        </div>
-        <div class="fs-row" onclick="location.href='match.html?match=barcelona-realmadrid'">
-          <div class="fs-row-status"><div class="fs-live-min"><span class="fs-blink"></span><span>78'</span></div></div>
-          <div class="fs-row-teams">
-            <div class="fs-team"><span class="fs-team-name">Barcelona</span></div>
-            <div class="fs-team"><span class="fs-team-name">Real Madrid</span></div>
+    <div class="layout-2col">
+      <div>
+        <section class="section" id="favMatchesSection" aria-labelledby="fav-matches-title" hidden>
+          <div class="section-header">
+            <h2 id="fav-matches-title">Partidos de tus favoritos</h2>
           </div>
-          <div class="fs-row-scores">
-            <span class="fs-score">2</span>
-            <span class="fs-score">1</span>
-          </div>
-        </div>
-      </div>
-      <div class="fs-group">
-        <div class="fs-group-header">
-          <span class="fs-group-name">Premier League</span>
-          <span class="fs-group-live">● 1 en vivo</span>
-        </div>
-        <div class="fs-row" onclick="location.href='match.html?match=mancity-arsenal'">
-          <div class="fs-row-status"><div class="fs-live-min"><span class="fs-blink"></span><span>89'</span></div></div>
-          <div class="fs-row-teams">
-            <div class="fs-team"><span class="fs-team-name">Man City</span></div>
-            <div class="fs-team"><span class="fs-team-name">Arsenal</span></div>
-          </div>
-          <div class="fs-row-scores">
-            <span class="fs-score">3</span>
-            <span class="fs-score">2</span>
-          </div>
-        </div>
-      </div>
-    </div>
+          <div id="favMatches"></div>
+        </section>
 
-    <!-- PRÓXIMOS ENCUENTROS -->
-    <div class="fs-section-header">
-      <span class="fs-section-title">
-        🕐 Próximos encuentros
-        <span id="upcomingSpinner" class="mini-spinner" style="display:none"></span>
-      </span>
-      <a class="fs-section-link" href="live.html">Ver todos →</a>
-    </div>
-    <div id="upcomingGrid">
-      <!-- se llena con API -->
-      <div class="fs-upcoming-group">
-        <div class="fs-upcoming-header"><span class="fs-upcoming-league-name">⚽ Fútbol</span></div>
-        <div class="fs-upcoming-row">
-          <div class="fs-upcoming-time-col">15:00</div>
-          <div class="fs-upcoming-teams">
-            <div class="fs-upcoming-team"><span class="fs-upcoming-team-name">Chelsea vs Liverpool</span></div>
+        <section class="section" aria-labelledby="live-title">
+          <div class="section-header">
+            <h2 id="live-title"><span class="badge badge--live">En vivo</span> Ahora mismo</h2>
+            <a class="section-link" href="live.html?estado=live">Ver todos</a>
           </div>
-          <div class="fs-upcoming-day">Hoy</div>
-        </div>
+          <div id="liveList" aria-live="polite"></div>
+        </section>
+
+        <section class="section" aria-labelledby="upcoming-title">
+          <div class="section-header">
+            <h2 id="upcoming-title">Próximos partidos</h2>
+            <a class="section-link" href="live.html?estado=upcoming">Ver calendario</a>
+          </div>
+          <div id="upcomingList"></div>
+        </section>
+
+        <section class="section" aria-labelledby="recent-title">
+          <div class="section-header">
+            <h2 id="recent-title">Resultados recientes</h2>
+            <a class="section-link" href="live.html?estado=final">Ver resultados</a>
+          </div>
+          <div id="recentList"></div>
+        </section>
       </div>
-    </div>
 
-    <!-- TABLA DE POSICIONES -->
-    <div class="fs-section-header">
-      <span class="fs-section-title">
-        🏆 Tabla de posiciones
-        <span id="standingsSpinner" class="mini-spinner" style="display:none"></span>
-      </span>
-    </div>
-    <div class="league-tabs" id="leagueTabs">
-      <div class="league-tab active" onclick="showLeague('140',this)">🇪🇸 La Liga</div>
-      <div class="league-tab" onclick="showLeague('39',this)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier</div>
-      <div class="league-tab" onclick="showLeague('2',this)">🏆 Champions</div>
-      <div class="league-tab" onclick="showLeague('135',this)">🇮🇹 Serie A</div>
-      <div class="league-tab" onclick="showLeague('239',this)">🇨🇴 Colombia</div>
-      <div class="league-tab" onclick="showLeague('71',this)">🇧🇷 Brasil</div>
-      <div class="league-tab" onclick="showLeague('128',this)">🇦🇷 Argentina</div>
-    </div>
-    <div class="standings-wrap">
-      <table>
-        <thead>
-          <tr><th>#</th><th>Equipo</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>Pts</th><th>Forma</th></tr>
-        </thead>
-        <tbody id="standingsBody">
-          <tr><td colspan="10" style="text-align:center;padding:20px;color:#8a9ab0">
-            <span class="mini-spinner"></span> Cargando...
-          </td></tr>
-        </tbody>
-      </table>
-    </div>
+      <aside class="dash-aside" aria-label="Favoritos y clasificación">
+        <section class="card card--pad" aria-labelledby="favs-title">
+          <div class="section-header">
+            <h2 id="favs-title">Mis favoritos</h2>
+            <a class="section-link" href="profile.html#favoritos">Gestionar</a>
+          </div>
+          <div id="favChips" class="fav-chips"></div>
+        </section>
 
+        <section class="card" aria-labelledby="mini-title">
+          <div class="card--pad" style="padding-bottom:0">
+            <div class="section-header">
+              <h2 id="mini-title">Clasificación</h2>
+              <a class="section-link" id="miniLink" href="standings.html">Tabla completa</a>
+            </div>
+            <div class="chips" id="miniTabs" role="group" aria-label="Elegir liga"></div>
+          </div>
+          <div id="miniTable" class="table-wrap mini-table" aria-live="polite"></div>
+        </section>
+      </aside>
+    </div>
   </main>
 
-  <script>
-    // API-Sports retirada: la clave estaba expuesta en el código público.
-    const API_KEY = '';
-    const PROXY   = '';
-    const CACHE_TTL = 30 * 60 * 1000;
-
-    function getCache(key) {
-      try {
-        const c = JSON.parse(localStorage.getItem('cache_' + key));
-        if (c && Date.now() - c.ts < CACHE_TTL) return c.data;
-      } catch(e) {}
-      return null;
-    }
-    function setCache(key, data) {
-      try { localStorage.setItem('cache_' + key, JSON.stringify({ ts: Date.now(), data })); } catch(e) {}
-    }
-    async function apiFetch(endpoint, cacheKey) {
-      const cached = getCache(cacheKey);
-      if (cached) return cached;
-      const url = PROXY + encodeURIComponent('https://v3.football.api-sports.io/' + endpoint);
-      if (!API_KEY) throw new Error('Sin API configurada');
-      const res = await fetch(url, { headers: { 'x-apisports-key': API_KEY } });
-      const data = await res.json();
-      if (data.response) setCache(cacheKey, data.response);
-      return data.response || [];
-    }
-
-    // ── PERFIL ──
-    const CRESTS = {
-      barcelona:'https://crests.football-data.org/81.svg', realmadrid:'https://crests.football-data.org/86.png',
-      atletico:'https://crests.football-data.org/78.png',  sevilla:'https://crests.football-data.org/559.png',
-      valencia:'https://crests.football-data.org/95.png',  villarreal:'https://crests.football-data.org/94.png',
-      mancity:'https://crests.football-data.org/65.png',   arsenal:'https://crests.football-data.org/57.png',
-      liverpool:'https://crests.football-data.org/64.png', chelsea:'https://crests.football-data.org/61.png',
-      manunited:'https://crests.football-data.org/66.png', tottenham:'https://crests.football-data.org/73.png',
-    };
-    const allTeams = [
-      {id:'barcelona',name:'Barcelona',crest:CRESTS.barcelona},{id:'realmadrid',name:'Real Madrid',crest:CRESTS.realmadrid},
-      {id:'atletico',name:'Atletico Madrid',crest:CRESTS.atletico},{id:'sevilla',name:'Sevilla',crest:CRESTS.sevilla},
-      {id:'valencia',name:'Valencia',crest:CRESTS.valencia},{id:'villarreal',name:'Villarreal',crest:CRESTS.villarreal},
-      {id:'mancity',name:'Man City',crest:CRESTS.mancity},{id:'arsenal',name:'Arsenal',crest:CRESTS.arsenal},
-      {id:'liverpool',name:'Liverpool',crest:CRESTS.liverpool},{id:'chelsea',name:'Chelsea',crest:CRESTS.chelsea},
-      {id:'manunited',name:'Man United',crest:CRESTS.manunited},{id:'tottenham',name:'Tottenham',crest:CRESTS.tottenham},
-      {id:'lakers',name:'Lakers',emoji:'💜'},{id:'bulls',name:'Bulls',emoji:'🔴'},
-      {id:'celtics',name:'Celtics',emoji:'🍀'},{id:'warriors',name:'Warriors',emoji:'💛'},
-      {id:'heat',name:'Heat',emoji:'🔥'},{id:'djokovic',name:'Djokovic',emoji:'🎾'},
-      {id:'nadal',name:'Nadal',emoji:'🎾'},{id:'alcaraz',name:'Alcaraz',emoji:'🎾'},
-      {id:'mapleleafs',name:'Maple Leafs',emoji:'🍁'},{id:'bruins',name:'Bruins',emoji:'🐻'},
-    ];
-
-    const profile = JSON.parse(localStorage.getItem('userProfile') || 'null');
-    if (profile) {
-      const name = [profile.name, profile.lastname].filter(Boolean).join(' ');
-      if (name) document.getElementById('sidebarName').textContent = name;
-      if (profile.username) document.getElementById('sidebarUsername').textContent = '@' + profile.username;
-      if (profile.avatar) {
-        document.getElementById('sidebarAvatar').innerHTML =
-          `<img src="${profile.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;
-      }
-      if (profile.favorites && profile.favorites.length > 0) {
-        document.getElementById('favsChips').innerHTML = profile.favorites.map(favId => {
-          const team = allTeams.find(t => t.id === favId);
-          if (!team) return '';
-          const img = team.crest
-            ? `<img src="${team.crest}" onerror="this.style.display='none'" style="width:16px;height:16px;object-fit:contain"/>`
-            : `<span>${team.emoji}</span>`;
-          return `<span class="fav-chip">${img} ${team.name}</span>`;
-        }).join('');
-      }
-    }
-
-    // ══════════════════════════════
-    // 1. PARTIDOS EN VIVO
-    // ══════════════════════════════
-    let liveMatches = [];
-
-    async function fetchLiveDashboard() {
-      document.getElementById('liveSpinner').style.display = 'inline-block';
-      try {
-        const fixtures = await apiFetch('fixtures?live=all', 'live_dash');
-        if (!fixtures || fixtures.length === 0) {
-          document.getElementById('liveSpinner').style.display = 'none';
-          return;
-        }
-
-        document.getElementById('apiBadge').style.display = 'inline-flex';
-        document.getElementById('liveTitle').textContent = `Partidos en vivo (${fixtures.length})`;
-        liveMatches = fixtures;
-
-        // Agrupar por liga
-        const groups = {};
-        fixtures.slice(0, 8).forEach(f => {
-          const key = f.league.id;
-          if (!groups[key]) groups[key] = { name: f.league.name, logo: f.league.logo, country: f.league.country, matches: [] };
-          groups[key].matches.push(f);
-        });
-
-        document.getElementById('liveGrid').innerHTML = Object.values(groups).map(g => `
-          <div class="fs-group">
-            <div class="fs-group-header">
-              ${g.logo ? `<img src="${g.logo}" onerror="this.style.display='none'" alt=""/>` : ''}
-              ${g.country && g.country !== 'World' ? `<span class="fs-group-country">${g.country}:</span>` : ''}
-              <span class="fs-group-name">${g.name}</span>
-              <span class="fs-group-live">● ${g.matches.length} en vivo</span>
-            </div>
-            ${g.matches.map(f => {
-              const elapsed = f.fixture.status.elapsed ? f.fixture.status.elapsed + "'" : f.fixture.status.short;
-              const isHT = f.fixture.status.short === 'HT';
-              return `
-                <div class="fs-row" id="dash_${f.fixture.id}" onclick="location.href='live.html'">
-                  <div class="fs-row-status">
-                    ${isHT
-                      ? `<span style="font-size:10px;font-weight:800;color:#f59e0b">HT</span>`
-                      : `<div class="fs-live-min"><span class="fs-blink"></span><span>${elapsed}</span></div>`}
-                  </div>
-                  <div class="fs-row-teams">
-                    <div class="fs-team">
-                      <img src="${f.teams.home.logo}" onerror="this.style.display='none'" alt=""/>
-                      <span class="fs-team-name">${f.teams.home.name}</span>
-                    </div>
-                    <div class="fs-team">
-                      <img src="${f.teams.away.logo}" onerror="this.style.display='none'" alt=""/>
-                      <span class="fs-team-name">${f.teams.away.name}</span>
-                    </div>
-                  </div>
-                  <div class="fs-row-scores">
-                    <span class="fs-score" id="dash_${f.fixture.id}_s1">${f.goals.home ?? 0}</span>
-                    <span class="fs-score" id="dash_${f.fixture.id}_s2">${f.goals.away ?? 0}</span>
-                  </div>
-                </div>`;
-            }).join('')}
-          </div>`).join('');
-
-      } catch(e) { console.warn('Live error:', e); }
-      document.getElementById('liveSpinner').style.display = 'none';
-    }
-
-    // ══════════════════════════════
-    // 2. PRÓXIMOS (3 días)
-    // ══════════════════════════════
-    async function fetchUpcoming() {
-      document.getElementById('upcomingSpinner').style.display = 'inline-block';
-      try {
-        const leagues = ['140','39','2','135','239','71','128'];
-        const season  = '2024';
-        const allFixtures = [];
-        const today = new Date().toISOString().split('T')[0];
-
-        for (let i = 1; i <= 3; i++) {
-          const d = new Date(); d.setDate(d.getDate() + i);
-          const dateStr = d.toISOString().split('T')[0];
-          for (const league of leagues) {
-            const cached = getCache(`up_${league}_${dateStr}`);
-            if (cached) { allFixtures.push(...cached); continue; }
-            try {
-              const url = PROXY + encodeURIComponent(
-                `https://v3.football.api-sports.io/fixtures?league=${league}&season=${season}&date=${dateStr}&status=NS`
-              );
-              if (!API_KEY) throw new Error('Sin API configurada');
-      const res = await fetch(url, { headers: { 'x-apisports-key': API_KEY } });
-              const data = await res.json();
-              if (data.response?.length > 0) {
-                setCache(`up_${league}_${dateStr}`, data.response);
-                allFixtures.push(...data.response);
-              }
-            } catch(e) {}
-          }
-        }
-
-        if (!allFixtures.length) { document.getElementById('upcomingSpinner').style.display = 'none'; return; }
-
-        allFixtures.sort((a,b) => new Date(a.fixture.date) - new Date(b.fixture.date));
-
-        // Agrupar por liga
-        const groups = {};
-        allFixtures.slice(0, 12).forEach(f => {
-          const key = f.league.id;
-          if (!groups[key]) groups[key] = { name: f.league.name, logo: f.league.logo, matches: [] };
-          groups[key].matches.push(f);
-        });
-
-        const dayNames = { 0:'Hoy', 1:'Mañana', 2:'En 2 días', 3:'En 3 días' };
-
-        document.getElementById('upcomingGrid').innerHTML = Object.values(groups).map(g => `
-          <div class="fs-upcoming-group">
-            <div class="fs-upcoming-header">
-              ${g.logo ? `<img src="${g.logo}" onerror="this.style.display='none'" alt=""/>` : ''}
-              <span class="fs-upcoming-league-name">${g.name}</span>
-            </div>
-            ${g.matches.map(f => {
-              const fDate = new Date(f.fixture.date);
-              const diff = Math.round((new Date(fDate.toISOString().split('T')[0]) - new Date(today)) / 86400000);
-              const dayLabel = dayNames[diff] || fDate.toLocaleDateString('es-CO', { weekday:'short', day:'numeric', month:'short' });
-              const timeLabel = fDate.toLocaleTimeString('es-CO', { hour:'2-digit', minute:'2-digit' });
-              return `
-                <div class="fs-upcoming-row">
-                  <div class="fs-upcoming-time-col">${timeLabel}</div>
-                  <div class="fs-upcoming-teams">
-                    <div class="fs-upcoming-team">
-                      <img src="${f.teams.home.logo}" onerror="this.style.display='none'" style="width:15px;height:15px;object-fit:contain"/>
-                      <span class="fs-upcoming-team-name">${f.teams.home.name}</span>
-                    </div>
-                    <div class="fs-upcoming-team">
-                      <img src="${f.teams.away.logo}" onerror="this.style.display='none'" style="width:15px;height:15px;object-fit:contain"/>
-                      <span class="fs-upcoming-team-name">${f.teams.away.name}</span>
-                    </div>
-                  </div>
-                  <div class="fs-upcoming-day">${dayLabel}</div>
-                </div>`;
-            }).join('')}
-          </div>`).join('');
-
-      } catch(e) { console.warn('Upcoming error:', e); }
-      document.getElementById('upcomingSpinner').style.display = 'none';
-    }
-
-    // ══════════════════════════════
-    // 3. TABLA
-    // ══════════════════════════════
-    async function showLeague(id, el) {
-      document.querySelectorAll('.league-tab').forEach(t => t.classList.remove('active'));
-      el.classList.add('active');
-      await fetchStandings(id);
-    }
-
-    async function fetchStandings(leagueId) {
-      document.getElementById('standingsSpinner').style.display = 'inline-block';
-      document.getElementById('standingsBody').innerHTML =
-        `<tr><td colspan="10" style="text-align:center;padding:20px;color:#8a9ab0"><span class="mini-spinner"></span> Cargando...</td></tr>`;
-      try {
-        const data = await apiFetch(`standings?league=${leagueId}&season=2024`, `std_${leagueId}`);
-        if (!data?.length) {
-          document.getElementById('standingsBody').innerHTML =
-            `<tr><td colspan="10" style="text-align:center;padding:20px;color:#8a9ab0">Sin datos disponibles</td></tr>`;
-          document.getElementById('standingsSpinner').style.display = 'none';
-          return;
-        }
-        const standings = data[0]?.league?.standings?.[0] || [];
-        document.getElementById('standingsBody').innerHTML = standings.map((s, i) => {
-          const form = (s.form || '').slice(-5).split('').map(r =>
-            `<span class="form-badge ${r}">${r}</span>`).join('');
-          return `
-            <tr>
-              <td><span class="std-pos ${i < 4 ? 'top' : ''}">${s.rank}</span></td>
-              <td><div class="std-team">
-                <img src="${s.team.logo}" onerror="this.style.display='none'" style="width:20px;height:20px;object-fit:contain"/>
-                ${s.team.name}
-              </div></td>
-              <td>${s.all.played}</td><td>${s.all.win}</td><td>${s.all.draw}</td>
-              <td>${s.all.lose}</td><td>${s.all.goals.for}</td><td>${s.all.goals.against}</td>
-              <td><span class="std-pts">${s.points}</span></td>
-              <td>${form}</td>
-            </tr>`;
-        }).join('');
-      } catch(e) {
-        document.getElementById('standingsBody').innerHTML =
-          `<tr><td colspan="10" style="text-align:center;padding:20px;color:#ef4444">Error al cargar</td></tr>`;
-      }
-      document.getElementById('standingsSpinner').style.display = 'none';
-    }
-
-    // ── TOAST ──
-    function showToast(title, body, sub) {
-      document.getElementById('toastTitle').textContent = title;
-      document.getElementById('toastBody').textContent = body;
-      document.getElementById('toastSub').textContent = sub;
-      const t = document.getElementById('goalToast');
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 3500);
-    }
-
-    // ── INIT ──
-    fetchLiveDashboard();
-    fetchUpcoming();
-    fetchStandings('140');
-  </script>
+  <noscript><p class="notice" style="margin:1rem">MultiSport Stats necesita JavaScript para cargar los datos.</p></noscript>
 </body>
 </html>

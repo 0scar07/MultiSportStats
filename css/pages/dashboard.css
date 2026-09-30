@@ -1,0 +1,22 @@
+/* Inicio: columna lateral con favoritos y mini clasificación */
+.dash-aside { display: flex; flex-direction: column; gap: var(--space-4); position: sticky; top: var(--space-5); }
+
+.fav-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.fav-chip {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: 4px 4px 4px 6px; border-radius: var(--radius-pill);
+  border: 1px solid var(--border); background: var(--surface-2);
+  font-size: var(--fs-sm); font-weight: 600;
+}
+.fav-chip .btn--icon { width: 26px; min-height: 26px; border-radius: 50%; }
+.fav-chip .btn--icon .icon { width: 14px; height: 14px; }
+.fav-empty { font-size: var(--fs-sm); color: var(--text-muted); }
+.fav-empty a { color: var(--brand); font-weight: 600; }
+
+.mini-table { margin-top: var(--space-3); }
+.mini-table .data-table th:first-child, .mini-table .data-table td:first-child { padding-left: var(--space-4); }
+.mini-table .data-table th:last-child, .mini-table .data-table td:last-child { padding-right: var(--space-4); }
+
+@media (max-width: 960px) {
+  .dash-aside { position: static; order: -1; }
+}

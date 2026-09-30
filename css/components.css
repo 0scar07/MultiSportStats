@@ -138,7 +138,7 @@
   body.nav-open { overflow: hidden; }
   .layout-2col { grid-template-columns: 1fr; }
 }
-@media (min-width: 961px) { .sidebar__close { display: none; } }
+@media (min-width: 961px) { .sidebar__close.btn { display: none; } }
 
 /* ---------- Botones ---------- */
 .btn {
@@ -263,6 +263,7 @@
 /* ---------- Partidos ---------- */
 .league-group { overflow: hidden; margin-bottom: var(--space-3); }
 .league-group__header {
+  flex-wrap: wrap;
   display: flex; align-items: center; gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--border);

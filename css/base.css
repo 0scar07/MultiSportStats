@@ -3,7 +3,8 @@
    Tokens de diseño, temas (oscuro por defecto / claro), reset y tipografía.
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+/* Fuentes (Google Fonts) cargadas con <link> en cada página:
+   Space Grotesk para títulos e Inter para texto. */
 
 :root {
   /* Marca */
