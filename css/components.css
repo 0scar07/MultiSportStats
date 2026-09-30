@@ -128,11 +128,12 @@
   .topbar__actions { display: flex; gap: var(--space-1); }
   .sidebar {
     transform: translateX(-100%);
-    transition: transform var(--dur) var(--ease);
+    visibility: hidden;
+    transition: transform var(--dur) var(--ease), visibility 0s linear var(--dur);
     box-shadow: var(--shadow-lg);
     width: min(84vw, 300px);
   }
-  body.nav-open .sidebar { transform: none; }
+  body.nav-open .sidebar { transform: none; visibility: visible; transition-delay: 0s; }
   body.nav-open .scrim { opacity: 1; pointer-events: auto; }
   body.nav-open { overflow: hidden; }
   .layout-2col { grid-template-columns: 1fr; }
