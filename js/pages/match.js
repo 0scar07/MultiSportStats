@@ -119,7 +119,9 @@ function raceResults(m) {
 
 function render() {
   const m = match;
-  document.title = `${m.kind === 'race' ? m.race.name : `${m.home.name} vs ${m.away.name}`} · MultiSport Stats`;
+  const name = m.kind === 'race' ? m.race.name : `${m.home.name} contra ${m.away.name}`;
+  document.title = `${name} · MultiSport Stats`;
+  document.getElementById('matchTitle').textContent = name;
   area.innerHTML = hero(m);
 
   if (m.kind === 'race') {
