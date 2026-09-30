@@ -1,85 +1,88 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MultiSport Stats — About Us</title>
-  <link rel="stylesheet" href="css/about.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acerca de · MultiSport Stats</title>
+  <meta name="description" content="Qué es MultiSport Stats, de dónde salen sus datos y quién lo hace.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <script src="js/core/theme-init.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages/about.css">
+  <script type="module" src="js/pages/about.js"></script>
 </head>
-<body class="app-body">
+<body data-page="about">
+  <a class="skip-link" href="#main">Saltar al contenido</a>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <a class="sidebar-logo" href="dashboard.html">
-      <div class="sidebar-logo-icon">🏆</div>
-      <div class="sidebar-logo-text">Multi<span>Sport</span><br>Stats</div>
-    </a>
-    <nav class="sidebar-nav">
-      <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
-      <a class="nav-item" href="live.html"><span class="nav-icon">📊</span> Live Matches</a>
-      <a class="nav-item" href="standings.html"><span class="nav-icon">🏅</span> Standings</a>
-      <a class="nav-item" href="news.html"><span class="nav-icon">📰</span> Noticias</a>
-      <a class="nav-item" href="highlights.html"><span class="nav-icon">🎬</span> Highlights</a>
-      <a class="nav-item" href="search.html"><span class="nav-icon">🔍</span> Buscar</a>
-      <a class="nav-item" href="profile.html"><span class="nav-icon">👤</span> Mi Perfil</a>
-      <a class="nav-item active" href="about.html"><span class="nav-icon">ℹ️</span> About Us</a>
-    </nav>
-    <div class="sidebar-footer">
-      <a class="logout-btn" href="login.html"><span>↩</span> Logout</a>
-    </div>
-  </aside>
+  <main id="main" class="main">
+    <section class="card about-hero">
+      <p class="about-kicker">Proyecto de código abierto</p>
+      <h1>Todos tus deportes en un solo lugar</h1>
+      <p>MultiSport Stats reúne marcadores, calendarios y clasificaciones de fútbol (La Liga y Premier League),
+        NBA, Roland Garros, NHL y Fórmula 1 en una interfaz rápida, accesible y sin anuncios.</p>
+      <div class="sport-row" aria-label="Deportes incluidos">
+        <span class="sport-tag" data-sport="futbol"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#futbol"></use></svg> Fútbol</span>
+        <span class="sport-tag" data-sport="baloncesto"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#baloncesto"></use></svg> Baloncesto</span>
+        <span class="sport-tag" data-sport="tenis"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#tenis"></use></svg> Tenis</span>
+        <span class="sport-tag" data-sport="hockey"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#hockey"></use></svg> Hockey</span>
+        <span class="sport-tag" data-sport="f1"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#f1"></use></svg> Fórmula 1</span>
+      </div>
+    </section>
 
-  <!-- MAIN -->
-  <main class="main">
-    <div class="about-hero">
-      <h2>Somos MultiSport Stats</h2>
-      <p>La plataforma líder en estadísticas deportivas en tiempo real. Cubrimos fútbol, baloncesto, tenis, hockey, F1 y mucho más, todo en un solo lugar para los fanáticos del deporte.</p>
-    </div>
+    <section class="section" aria-labelledby="features-title">
+      <h2 id="features-title" class="about-h2">Qué puedes hacer</h2>
+      <div class="grid grid--cards">
+        <article class="card card--pad card--hover feature">
+          <svg class="icon icon--lg" aria-hidden="true"><use href="assets/icons.svg#live"></use></svg>
+          <h3>Seguir los partidos</h3>
+          <p>En vivo, próximos y resultados, con filtros por deporte y estado, y búsqueda por equipo.</p>
+        </article>
+        <article class="card card--pad card--hover feature">
+          <svg class="icon icon--lg" aria-hidden="true"><use href="assets/icons.svg#table"></use></svg>
+          <h3>Leer las tablas</h3>
+          <p>Clasificaciones que puedes ordenar por cualquier columna, con zonas europeas y de descenso.</p>
+        </article>
+        <article class="card card--pad card--hover feature">
+          <svg class="icon icon--lg" aria-hidden="true"><use href="assets/icons.svg#star"></use></svg>
+          <h3>Guardar favoritos</h3>
+          <p>Marca equipos, deportistas o ligas y verás primero sus partidos en el inicio.</p>
+        </article>
+      </div>
+    </section>
 
-    <div class="about-cards">
-      <div class="about-card">
-        <div class="icon">📡</div>
-        <h3>Datos en Tiempo Real</h3>
-        <p>Actualización instantánea de marcadores, estadísticas y eventos durante todos los partidos en vivo.</p>
+    <section class="section" aria-labelledby="data-title">
+      <h2 id="data-title" class="about-h2">De dónde salen los datos</h2>
+      <div class="card">
+        <dl class="sources">
+          <div><dt>ESPN (API pública no oficial)</dt><dd>Marcadores, fichas y tablas de La Liga, Premier League, NBA y NHL. No está documentada y puede cambiar sin aviso.</dd></div>
+          <div><dt>Jolpica F1</dt><dd>Clasificación de pilotos, última carrera y próxima carrera de Fórmula 1. API abierta, sucesora de Ergast.</dd></div>
+          <div><dt>Datos de demostración</dt><dd>Roland Garros, las noticias y el respaldo de todas las ligas cuando una API no responde. Siempre se marcan con la etiqueta «Datos de demostración».</dd></div>
+          <div><dt>Fotos</dt><dd>Imágenes de Unsplash (licencia libre), optimizadas en formato WebP.</dd></div>
+        </dl>
       </div>
-      <div class="about-card">
-        <div class="icon">🌍</div>
-        <h3>Cobertura Global</h3>
-        <p>Más de 50 ligas y torneos internacionales cubiertos en 6 deportes diferentes.</p>
-      </div>
-      <div class="about-card">
-        <div class="icon">📊</div>
-        <h3>Análisis Avanzado</h3>
-        <p>Estadísticas profundas, históricos de equipos y comparativas para el fanático más apasionado.</p>
-      </div>
-    </div>
+      <p class="muted about-note">MultiSport Stats no está afiliado a ninguna liga, equipo ni medio. No usa logos oficiales: los escudos son monogramas con las siglas y el color de cada equipo.</p>
+    </section>
 
-    <div class="about-team">
-      <h3>Nuestro Equipo</h3>
-      <div class="team-grid">
-        <div class="team-member">
-          <div class="member-avatar" style="background:#dbeafe">👨‍💻</div>
-          <div class="member-name">Oscar Llanos</div>
-          <div class="member-role">CEO & Fundador</div>
-        </div>
-        <div class="team-member">
-          <div class="member-avatar" style="background:#dcfce7">👩‍🎨</div>
-          <div class="member-name">Nelson Sierra</div>
-          <div class="member-role">Diseño UX</div>
-        </div>
-        <div class="team-member">
-          <div class="member-avatar" style="background:#fef9c3">👨‍🔧</div>
-          <div class="member-name">Joseph De La Rans</div>
-          <div class="member-role">Desarrollo Backend</div>
-        </div>
-        <div class="team-member">
-          <div class="member-avatar" style="background:#fce7f3">👩‍💼</div>
-          <div class="member-name">Aun no tenemos </div>
-          <div class="member-role">Datos Deportivos</div>
-        </div>
+    <section class="section" aria-labelledby="team-title">
+      <h2 id="team-title" class="about-h2">Equipo</h2>
+      <div class="grid team-grid">
+        <div class="card card--pad member"><span class="avatar">OL</span><div><h3>Oscar Llanos</h3><p>Fundador y desarrollo</p></div></div>
+        <div class="card card--pad member"><span class="avatar">NS</span><div><h3>Nelson Sierra</h3><p>Diseño UX</p></div></div>
+        <div class="card card--pad member"><span class="avatar">JD</span><div><h3>Joseph De La Rans</h3><p>Desarrollo</p></div></div>
       </div>
-    </div>
+    </section>
+
+    <section class="section">
+      <a class="btn" href="https://github.com/0scar07/MultiSportStats" target="_blank" rel="noopener">
+        Ver el código en GitHub
+        <svg class="icon icon--sm" aria-hidden="true"><use href="assets/icons.svg#external"></use></svg>
+        <span class="sr-only">(se abre en una pestaña nueva)</span>
+      </a>
+    </section>
   </main>
-
 </body>
 </html>

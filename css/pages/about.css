@@ -1,0 +1,28 @@
+/* Acerca de */
+.about-hero {
+  padding: var(--space-6); margin-bottom: var(--space-6);
+  background:
+    radial-gradient(70% 120% at 100% 0%, var(--brand-soft), transparent 70%),
+    var(--surface);
+}
+.about-hero h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); max-width: 18ch; margin-bottom: var(--space-3); }
+.about-hero p { color: var(--text-muted); max-width: 62ch; }
+.about-kicker { font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brand) !important; margin-bottom: var(--space-2); }
+.sport-row { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-5); }
+.sport-row .sport-tag { font-size: var(--fs-sm); }
+
+.about-h2 { font-size: var(--fs-xl); margin-bottom: var(--space-4); }
+.feature .icon { color: var(--brand); margin-bottom: var(--space-3); }
+.feature h3 { margin-bottom: var(--space-2); }
+.feature p { color: var(--text-muted); font-size: var(--fs-sm); }
+
+.sources div { padding: var(--space-4); border-bottom: 1px solid var(--border); }
+.sources div:last-child { border-bottom: 0; }
+.sources dt { font-weight: 600; }
+.sources dd { margin: var(--space-1) 0 0; color: var(--text-muted); font-size: var(--fs-sm); }
+.about-note { margin-top: var(--space-3); font-size: var(--fs-sm); }
+
+.team-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.member { display: flex; align-items: center; gap: var(--space-3); }
+.member .avatar { width: 48px; height: 48px; }
+.member p { color: var(--text-muted); font-size: var(--fs-sm); }
