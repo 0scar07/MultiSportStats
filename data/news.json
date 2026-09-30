@@ -1,0 +1,123 @@
+[
+  {
+    "id": "guia-jornada-laliga",
+    "sport": "futbol",
+    "league": "laliga",
+    "featured": true,
+    "hoursAgo": 2,
+    "title": "Guía de la jornada: qué mirar este fin de semana en La Liga",
+    "summary": "Los partidos clave, cómo llegan los equipos según la tabla y dónde seguir cada resultado en directo.",
+    "body": [
+      "Cada jornada de La Liga reordena la parte alta y la baja de la tabla. En MultiSport Stats puedes ver la clasificación completa y ordenarla por cualquier columna: puntos, goles a favor o diferencia de goles.",
+      "Si marcas tus equipos con la estrella, sus partidos aparecerán primero en el inicio. Así no tienes que buscarlos entre todos los encuentros del día.",
+      "Consejo: en la vista de partidos puedes filtrar solo los que están en vivo y buscar por nombre de equipo."
+    ],
+    "image": "assets/img/news/futbol-estadio.webp",
+    "alt": "Estadio de fútbol lleno visto desde la grada, con el césped iluminado"
+  },
+  {
+    "id": "zonas-premier",
+    "sport": "futbol",
+    "league": "premier",
+    "hoursAgo": 5,
+    "title": "Premier League: cómo leer la tabla y las zonas europeas",
+    "summary": "Qué significan los colores de la clasificación y por qué la diferencia de goles decide tantos empates a puntos.",
+    "body": [
+      "En la tabla de posiciones, la franja verde marca los puestos que dan acceso a la Liga de Campeones y la roja, los de descenso.",
+      "Cuando dos equipos empatan a puntos, el primer criterio de desempate en la Premier League es la diferencia de goles. Por eso cada gol cuenta, incluso en partidos ya decididos.",
+      "Puedes ordenar la tabla por la columna DG para ver qué equipos tienen mejor balance."
+    ],
+    "image": "assets/img/news/futbol-jugada.webp",
+    "alt": "Jugador golpeando un balón de fútbol en un campo al aire libre"
+  },
+  {
+    "id": "nba-pretemporada",
+    "sport": "baloncesto",
+    "league": "nba",
+    "hoursAgo": 8,
+    "title": "La NBA calienta motores: qué mirar en la pretemporada",
+    "summary": "Rotaciones, fichajes y minutos de novatos: lo que dicen (y lo que no) los partidos de preparación.",
+    "body": [
+      "Los partidos de pretemporada sirven para probar rotaciones y dar minutos a jugadores jóvenes. Sus resultados no cuentan para la clasificación.",
+      "Mientras la temporada regular no arranque, la tabla de MultiSport Stats muestra la clasificación completa de la temporada anterior, para que tengas una referencia.",
+      "En la NBA la tabla se ordena por porcentaje de victorias. Puedes filtrarla por conferencia Este u Oeste."
+    ],
+    "image": "assets/img/news/baloncesto-arena.webp",
+    "alt": "Pabellón de baloncesto iluminado con luces de colores y las gradas llenas"
+  },
+  {
+    "id": "nhl-puntos",
+    "sport": "hockey",
+    "league": "nhl",
+    "hoursAgo": 11,
+    "title": "Guía rápida de la NHL: así funcionan los puntos y las prórrogas",
+    "summary": "Por qué perder en la prórroga también suma y cómo afecta a la clasificación.",
+    "body": [
+      "En la NHL una victoria vale dos puntos. Una derrota en tiempo reglamentario no suma nada, pero perder en la prórroga o en la tanda de penaltis da un punto.",
+      "Por eso la tabla tiene una columna PR (derrotas en prórroga): esos puntos extra suelen decidir quién entra en playoffs.",
+      "Ordena la tabla por PR para ver qué equipos llegan más veces a la prórroga."
+    ],
+    "image": "assets/img/news/hockey-porteria.webp",
+    "alt": "Portería de hockey sobre hielo junto a la pista vacía"
+  },
+  {
+    "id": "roland-garros-arcilla",
+    "sport": "tenis",
+    "league": "rolandgarros",
+    "hoursAgo": 20,
+    "title": "Roland Garros: por qué la tierra batida es la superficie más exigente",
+    "summary": "Bote alto, puntos largos y partidos a cinco sets: las claves del Grand Slam de París.",
+    "body": [
+      "La arcilla frena la pelota y la hace botar más alto que en pista dura o hierba. Los puntos duran más y la resistencia física pesa mucho.",
+      "En el cuadro masculino los partidos se juegan al mejor de cinco sets, así que remontar desde dos sets abajo es posible.",
+      "En la sección de tablas encontrarás el cuadro de demostración de Roland Garros, desde cuartos de final hasta la final."
+    ],
+    "image": "assets/img/news/tenis-pista.webp",
+    "alt": "Tenista sentada en una pista con la raqueta en alto y pelotas alrededor"
+  },
+  {
+    "id": "f1-sistema-puntos",
+    "sport": "f1",
+    "league": "f1",
+    "hoursAgo": 26,
+    "title": "Fórmula 1: cómo se reparten los puntos en cada Gran Premio",
+    "summary": "Del 25 al 1: solo los diez primeros suman para el campeonato de pilotos.",
+    "body": [
+      "En cada Gran Premio puntúan los diez primeros: 25, 18, 15, 12, 10, 8, 6, 4, 2 y 1 punto.",
+      "La clasificación de pilotos de MultiSport Stats se actualiza con la API pública de Jolpica, así que refleja los resultados reales de la temporada.",
+      "Si hay empate a puntos, cuenta quién tiene más victorias."
+    ],
+    "image": null,
+    "alt": ""
+  },
+  {
+    "id": "glosario-hockey",
+    "sport": "hockey",
+    "league": "nhl",
+    "hoursAgo": 34,
+    "title": "Del hielo al marcador: glosario básico del hockey",
+    "summary": "Power play, faceoff, shootout: los términos que verás en la ficha de cada partido.",
+    "body": [
+      "Power play: un equipo juega con un jugador más porque el rival cumple una sanción.",
+      "Faceoff: el saque neutral con el que se reanuda el juego. Ganarlo significa tener la posesión.",
+      "Shootout: la tanda de penaltis que decide el partido si la prórroga termina empatada."
+    ],
+    "image": "assets/img/news/hockey-partido.webp",
+    "alt": "Jugadores de hockey sobre hielo disputando el disco durante un partido"
+  },
+  {
+    "id": "favoritos-multisport",
+    "sport": "futbol",
+    "league": null,
+    "hoursAgo": 48,
+    "title": "Cómo seguir a tus equipos favoritos en MultiSport Stats",
+    "summary": "Marca equipos y ligas con la estrella para verlos primero en el inicio.",
+    "body": [
+      "Pulsa la estrella junto a un equipo en las tablas, en la ficha de un partido o en el buscador.",
+      "Tus favoritos se guardan solo en este navegador y aparecen en el inicio, junto con sus próximos partidos.",
+      "Puedes gestionarlos desde Mi perfil."
+    ],
+    "image": "assets/img/news/futbol-balon.webp",
+    "alt": "Balón de fútbol sobre el césped junto a las botas de un jugador"
+  }
+]
