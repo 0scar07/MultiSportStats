@@ -109,8 +109,8 @@ export function leagueGroups(matches, sources = {}) {
  */
 export function flashScores(root, prev = new Map()) {
   const next = new Map();
-  root.querySelectorAll('.match[data-id] [data-score]').forEach((el) => {
-    const key = `${el.closest('.match').dataset.id}:${el.dataset.score}`;
+  root.querySelectorAll('[data-id] [data-score]').forEach((el) => {
+    const key = `${el.closest('[data-id]').dataset.id}:${el.dataset.score}`;
     next.set(key, el.textContent);
     if (prev.has(key) && prev.get(key) !== el.textContent) el.classList.add('score--flash');
   });
