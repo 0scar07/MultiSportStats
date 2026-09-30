@@ -52,7 +52,7 @@ MultiSport Stats/
 ├── 📄 register.html        # Registro de usuario
 │
 └── css/
-    ├── 🎨 dasboard.css
+    ├── 🎨 dashboard.css
     ├── 🎨 live.css
     ├── 🎨 standings.css
     ├── 🎨 about.css
