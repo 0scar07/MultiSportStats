@@ -271,7 +271,7 @@
   border-bottom: 1px solid var(--border);
   box-shadow: inset 3px 0 0 var(--sport, var(--brand));
 }
-.league-group__header h3 { font-size: var(--fs-sm); flex: 1; }
+.league-group__header h3 { font-size: var(--fs-sm); flex: 1; white-space: nowrap; }
 .league-group__header .icon { color: var(--sport); }
 
 .match {
@@ -469,7 +469,10 @@ th[aria-sort='ascending'] .sort-btn .icon, th[aria-sort='descending'] .sort-btn 
 
 @media (max-width: 600px) {
   .match { grid-template-columns: 58px minmax(0, 1fr) auto; padding: var(--space-3); }
-  .match .fav-btn { display: none; }
+  .league-group__header .badge--demo { padding: 3px; }
+  .league-group__header .badge__label {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
   .form-row { grid-template-columns: 1fr; }
   h1 { font-size: var(--fs-xl); }
   .search { max-width: none; }

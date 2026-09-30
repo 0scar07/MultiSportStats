@@ -17,7 +17,7 @@ export function statusBadge(match) {
 }
 
 export function demoBadge() {
-  return `<span class="badge badge--demo" title="${esc(DEMO_TEXT)}">${icon('database', 'icon--sm')} Datos de demostración</span>`;
+  return `<span class="badge badge--demo" title="${esc(DEMO_TEXT)}">${icon('database', 'icon--sm')} <span class="badge__label">Datos de demostración</span></span>`;
 }
 
 export function apiBadge(label = 'En directo') {
